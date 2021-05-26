@@ -1,0 +1,8 @@
+[
+    {
+        "type": "texture",
+        "name": "box",
+        "path": "./assets/texture/",
+        "url": "westworld.jpeg"
+    }
+]

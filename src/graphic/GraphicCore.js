@@ -52,12 +52,21 @@ class GraphicCore extends Core{
         this.loader.on('start',()=>{
             
         });
-        this.loader.on('progress',()=>{
-            
+        this.loader.on('progress',(d)=>{
+            console.log(d);
+            switch (d.name){
+                case "box":
+                    this.currentScene.box.material.map = d.map;
+                    this.currentScene.box.material.color = new THREE.Color('white');
+                    this.currentScene.box.material.needsUpdate = true;
+                break;
+            };
+            console.log(this.currentScene.box);
         });
         this.loader.on('load',()=>{
             
         });
+        this.loader.load();
         this.startAnimation();
     }
     init(){

@@ -1,5 +1,5 @@
 'use strict';
-
+const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 
@@ -26,5 +26,14 @@ module.exports = {
     ],
   },
   
-  plugins: [new HtmlWebpackPlugin({template:'./index.html'})],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template:'./index.html'
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: "assets", to: "assets" },
+      ],
+    }),
+  ],
 };

@@ -1,4 +1,5 @@
 import { EventEmitter } from "events";
+import * as THREE from "three";
 
 class GraphicLoader extends EventEmitter {
     constructor(assets){
