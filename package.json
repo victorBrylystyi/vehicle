@@ -6,10 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "buildDemo": "npm --prefix demo run build",
-    "gitUpdate": "git add . && git commit -m 'test' && git push -u origin main",
-    "build": "webpack --mode production && npm run buildDemo && npm run gitUpdate",
-    "watch": "webpack --watch",
-    "dev": "npm run watch && npm --prefix demo start"
+    "gitUpdate": "git add . && git commit -m 'test3' && git push -u origin main",
+    "pushHeroku": "git subtree push --prefix demo/out heroku master && heroku open",
+    "build": "webpack --mode production && npm run buildDemo && npm run gitUpdate && npm run pushHeroku",
+    "watch": "webpack --watch && npm --prefix demo start",
+    "dev": "npm run watch"
   },
   "keywords": [],
   "author": "",

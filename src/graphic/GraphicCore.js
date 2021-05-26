@@ -57,7 +57,7 @@ class GraphicCore extends Core{
             switch (d.name){
                 case "box":
                     this.currentScene.box.material.map = d.map;
-                    this.currentScene.box.material.color = new THREE.Color('white');
+                    this.currentScene.box.material.color = new THREE.Color('red');
                     this.currentScene.box.material.needsUpdate = true;
                 break;
             };
