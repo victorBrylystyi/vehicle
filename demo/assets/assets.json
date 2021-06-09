@@ -1,8 +1,52 @@
 [
     {
+        "type": "3dModel",
+        "name": "vehicleModel",
+        "path": "./assets/gltf/",
+        "url": "amg_e63_2.gltf"
+    },
+    {
+        "type": "env",
+        "name": "v1",
+        "path": "./assets/env/v1/",
+        "url": [              
+                "px.jpg",
+                "nx.jpg",
+                "py.jpg",
+                "ny.jpg",
+                "pz.jpg",
+                "nz.jpg"
+                ]
+    },
+    {
+        "type": "env",
+        "name": "v2",
+        "path": "./assets/env/v2/",
+        "url": [              
+                "px.png",
+                "nx.png",
+                "py.png",
+                "ny.png",
+                "pz.png",
+                "nz.png"
+                ]
+    },
+    {
         "type": "texture",
-        "name": "box",
-        "path": "./assets/texture/",
-        "url": "westworld.jpeg"
+        "name": "ground_color",
+        "path": "./assets/ground/Tiles/",
+        "url": "SolarPanel002_1K_Color.jpg"
+    },
+    {
+        "type": "texture",
+        "name": "ground_normal",
+        "path": "./assets/ground/Tiles/",
+        "url": "SolarPanel002_1K_Normal.jpg"
+    },
+    {
+        "type": "texture",
+        "name": "ground_roughness",
+        "path": "./assets/ground/Tiles/",
+        "url": "SolarPanel002_1K_Roughness.jpg"
     }
 ]

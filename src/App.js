@@ -1,17 +1,50 @@
-import { GUI } from "dat.gui";
-import { GraphicCore } from "./graphic/GraphicCore";
-import { PhysicCore } from "./physic/PhysicCore";
 
-class App {
-    constructor(element=null,resources=null){
+import { VehicleFilm } from "./Films/Vehicle/VehicleFilm";
+
+// Player 
+
+class App { 
+    constructor(display,res){
         this.name = 'Top Manager';
-        this.cores = {
-            graphic: new GraphicCore(element,resources),
-            physic: new PhysicCore(),
-        };
-        this.ui = new GUI();
+        this.currentFilm = new VehicleFilm(display,res);
         this.init();
         return this;
+    }
+    init(){
+        this.currentFilm.init();
+    }
+    action(){
+        this.currentFilm.run();
+    }
+    stop(){
+        this.currentFilm.stop();
+    }
+    setInputData(input){
+
+        if ( input === undefined ) return;
+
+        for (const key in input){
+
+            const newValue = input[key];
+
+            if ( newValue === undefined ) {
+                console.warn( 'App: \'' + key + '\' parameter is undefined.' );
+                continue;
+            }
+
+            const currentValue = this[key];
+
+			if ( currentValue === undefined ) {
+
+				console.warn( 'App.' + this.type + ': \'' + key + '\' is not a property of this material.' );
+				continue;
+
+			}
+
+            this[key] = newValue;
+
+        }
+
     }
     greeting(){
         console.log(`Hi! I am ${this.name}. Welcome to App.js =)`);
@@ -19,36 +52,7 @@ class App {
             core.greeting();
         }
     }
-    init(){
-        for ( const core of Object.values(this.cores)){
-            core.init();
-        }
-        console.log('done init');
-    }
-    run(){
-        for ( const core of Object.values(this.cores)){
-            core.run();
-        }
-        return 'run app';
-    }
-    stop(){
-        for ( const core of Object.values(this.cores)){
-            core.stop();
-        }
-        return 'stop app';
-    }
-    runGraphic(){
-        return this.cores.graphic.run();
-    }
-    runPhysic(){
-        return this.cores.physic.run();
-    }
-    stopGraphic(){
-        return this.cores.graphic.stop();
-    }
-    stopPhysic(){
-        return this.cores.physic.stop();
-    }
+
 }
 
 export { App };
