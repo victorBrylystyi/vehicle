@@ -62,9 +62,6 @@ class Body extends GObject{
 
         this.add(this.headLights.LF, this.headLights.LF.target,
                  this.headLights.RF, this.headLights.RF.target);
-
-                 //console.log(this.headLights)
-
     }
     headlightHelp(angle){
         if (this.headLights){
@@ -85,16 +82,16 @@ class Body extends GObject{
     }
     setLightsPositions(){
 
-        let front = {
-          x: 17.8,//17.75
+        const front = {
+          x: 17.8,
           y: 5.53,
           z: -0.6
         };
     
-        let rear = {
+        const rear = {
           x: -16.9,
           y: 4.3,
-          z: 1 //
+          z: 1 
         };
         
         const flLight = this.foundMeshByName('f_l_light',this.children);

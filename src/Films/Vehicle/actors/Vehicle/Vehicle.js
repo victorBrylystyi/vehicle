@@ -7,8 +7,8 @@ class Vehicle {
     constructor(physicWorld,cntrls){
         this.physicWorld = physicWorld;
         this.controls = cntrls;
-        this.bodyMass = 1500;
-        this.wheelMass = 10;
+        this.bodyMass = 1700;
+        this.wheelMass = 30;
         this.mainDim = {
             body: {
                 x: 2.69,
@@ -44,14 +44,17 @@ class Vehicle {
             angle: 0,
             stw: 0,
           },
-        }
-        this.strAngle = 0;
-        this.stw = 0;
+          typeDrive: {
+            front: false,
+            rear: false,
+            full: true,
+          }
+        };
         this.connectionPointsWheels = {
-          LF: new CANNON.Vec3(13.6, 6.5, -3.3),
-          RF: new CANNON.Vec3(13.6, -6.5, -3.3),
-          LR: new CANNON.Vec3(-10, 6.5, -3.3),
-          RR: new CANNON.Vec3(-10, -6.5, -3.3)
+          LF: new CANNON.Vec3(13.6, 6.9, -3.3),
+          RF: new CANNON.Vec3(13.6, -6.9, -3.3),
+          LR: new CANNON.Vec3(-10, 6.7, -3.3),
+          RR: new CANNON.Vec3(-10, -6.7, -3.3)
         };
         this.init();
         return this;
@@ -83,17 +86,48 @@ class Vehicle {
       };
       this.createRaycastVehicle();
     }
-    changeBodyHeadlightsVisible(v){
-      this.body.headLights.LF.visible = v;
-      this.body.headLights.RF.visible = v;
-
-      if (v){
-        this.materials.lights.LF.emissive.setHex(0xffffff);
-        this.materials.lights.RF.emissive.setHex(0xffffff);
-      } else {
-        this.materials.lights.LF.emissive.setHex(0x000000);
-        this.materials.lights.RF.emissive.setHex(0x000000);
+    changeTypeDrive(type = ''){
+      switch(type){
+        case 'Front':
+            this.settings.typeDrive.front = true;
+            this.settings.typeDrive.full  = false;
+            this.settings.typeDrive.rear  = false;
+            break;
+            case 'Rear':
+                this.settings.typeDrive.front = false;
+                this.settings.typeDrive.full  = false;
+                this.settings.typeDrive.rear  = true;
+                break;
+                case 'Full':
+                    this.settings.typeDrive.front = false;
+                    this.settings.typeDrive.full  = true;
+                    this.settings.typeDrive.rear  = false;
+                    break;
       }
+    }
+    changeBodyHeadlightsVisible(v=undefined){
+      if (v === undefined){
+        this.body.headLights.LF.visible = !this.body.headLights.LF.visible;
+        this.body.headLights.RF.visible = !this.body.headLights.RF.visible;
+
+        (this.body.headLights.LF.visible) ? this.materials.lights.LF.emissive.setHex(0xffffff) : 
+        this.materials.lights.LF.emissive.setHex(0x000000);
+
+        (this.body.headLights.RF.visible) ? this.materials.lights.RF.emissive.setHex(0xffffff) : 
+        this.materials.lights.RF.emissive.setHex(0x000000);
+
+      } else {
+        this.body.headLights.LF.visible = v;
+        this.body.headLights.RF.visible = v;
+        if (v){
+          this.materials.lights.LF.emissive.setHex(0xffffff);
+          this.materials.lights.RF.emissive.setHex(0xffffff);
+        } else {
+          this.materials.lights.LF.emissive.setHex(0x000000);
+          this.materials.lights.RF.emissive.setHex(0x000000);
+        }
+      }
+
 
 
     }
@@ -111,62 +145,60 @@ class Vehicle {
     }
 
     handler(event){
-      let keyUp = (event.type == 'keyup');
+      const keyUp = (event.type == 'keyup');
 
-          this.raycastVehicle.setBrake(0, 0);
-          this.raycastVehicle.setBrake(0, 1);
-          this.raycastVehicle.setBrake(0, 2);
-          this.raycastVehicle.setBrake(0, 3);
-
-          // if (keyUp){
-          //   this.controls.maxDistance = 35;
-          //   //this.controls.maxPolarAngle = Math.PI/1.9;
-          // } else {
-          //   this.controls.maxDistance = 50;
-          //   //this.controls.maxPolarAngle = Math.PI/3;
-          // }
-      
-  
       switch(event.code){
         case 'KeyW':
           this.setEngineForce(keyUp ? 0 : -this.settings.maxEngineForce);
-          // if (keyUp){
-          //   this.controls.maxDistance = 35;
-          //   this.controls.maxPolarAngle = Math.PI/1.9;
-          // } else {
-          //   this.controls.maxDistance = 50;
-          //   this.controls.maxPolarAngle = Math.PI/3;
-          // }
-          //console.log(this.raycastVehicle.wheelInfos[2].brake);
           break;
           case 'KeyS':
-            (this.raycastVehicle.currentVehicleSpeedKmHour>0) ? this.setBreakeForce(this.settings.maxBrakeForce) : this.setEngineForce(keyUp ? 0 : this.settings.maxEngineForce);
-            //this.setEngineForce(keyUp ? 0 : this.settings.maxEngineForce);
+            if (!keyUp){
+              if (this.raycastVehicle.currentVehicleSpeedKmHour>0) {
+                this.setBreakeForce(this.settings.maxBrakeForce);
+              } else {
+                if (this.raycastVehicle.wheelInfos[0].brake>0){
+                  this.relaxBreake();
+                }
+                this.setEngineForce(this.settings.maxEngineForce);
+              }
+            } else {
+              this.relaxBreake();
+              this.setEngineForce(0);
+            }
             break;
             case 'KeyA':
-              keyUp ? this.strAngle = 0 : 
-              (this.strAngle<0.4) ? this.setSteeringAngle(0.15) : this.setSteeringAngle();
+              keyUp ? this.settings.steering.angle  = 0 : 
+              (this.settings.steering.angle <0.55) ? this.setSteeringAngle(0.1) : this.setSteeringAngle();
               break;
               case 'KeyD':
-                keyUp ? this.strAngle = 0 : 
-                (this.strAngle>-0.4) ? this.setSteeringAngle(-0.15) : this.setSteeringAngle();
+                keyUp ? this.settings.steering.angle  = 0 : 
+                (this.settings.steering.angle >-0.55) ? this.setSteeringAngle(-0.1) : this.setSteeringAngle();
                 break;
                 case 'KeyR':
-                    this.resetVehicle();
+                    this.resetVehicle();         
                   break;
                   case 'Space':
-                    this.raycastVehicle.setBrake(this.settings.maxBrakeForce, 2);
-                    this.raycastVehicle.setBrake(this.settings.maxBrakeForce, 3);
-                    //console.log(this.raycastVehicle.wheelInfos[2].brake);
+                    if (keyUp){
+                      this.relaxBreake();
+                      this.setEngineForce(0);
+                    } else {
+                      this.raycastVehicle.setBrake(this.settings.maxBrakeForce, 2);
+                      this.raycastVehicle.setBrake(this.settings.maxBrakeForce, 3);
+                    }
                     break;
-      }
+      };
     }
     setSteeringAngle(value = 0){
-
-      this.strAngle += value;
+      this.settings.steering.angle  += value;
+    }
+    relaxBreake(){
+      this.raycastVehicle.setBrake(0, 0);
+      this.raycastVehicle.setBrake(0, 1);
+      this.raycastVehicle.setBrake(0, 2);
+      this.raycastVehicle.setBrake(0, 3);
     }
     updateLightHelper(){
-      this.body.headlightHelp(this.stw);
+      this.body.headlightHelp(this.settings.steering.stw);
     }
     setBreakeForce(breakForce){
       if (this.raycastVehicle.currentVehicleSpeedKmHour>0){
@@ -183,10 +215,10 @@ class Vehicle {
 
     }
     setEngineForce(force){
-      this.raycastVehicle.applyEngineForce(force, 0);
-      this.raycastVehicle.applyEngineForce(force, 1);
-      this.raycastVehicle.applyEngineForce(force, 2);
-      this.raycastVehicle.applyEngineForce(force, 3);
+      (this.settings.typeDrive.full || this.settings.typeDrive.front) ? this.raycastVehicle.applyEngineForce((this.settings.typeDrive.front) ? 1.7 * force : force, 0) : null;
+      (this.settings.typeDrive.full || this.settings.typeDrive.front) ? this.raycastVehicle.applyEngineForce((this.settings.typeDrive.front) ? 1.7 * force : force, 1) : null;
+      (this.settings.typeDrive.full || this.settings.typeDrive.rear)  ? this.raycastVehicle.applyEngineForce((this.settings.typeDrive.rear)  ? 1.7 * force : force, 2) : null;
+      (this.settings.typeDrive.full || this.settings.typeDrive.rear)  ? this.raycastVehicle.applyEngineForce((this.settings.typeDrive.rear)  ? 1.7 * force : force, 3) : null;
     }
     resetVehicle(){
       // Position
@@ -217,19 +249,12 @@ class Vehicle {
     }
     steeringControll(angle){
       let delta = 0;
-      let k = 0;
-      delta = angle - this.stw;
-      //Math.abs(delta)
-     // if (Math.abs(delta)<=0.15)
-      //(Math.abs(angle)<=0.15) ? keyCtrl.stw += delta/2 :  keyCtrl.stw += delta / 7;
-      this.stw += delta / 7;
-
-
-      // this.raycastVehicle.wheelInfos[0].steering = this.stw;
-      // this.raycastVehicle.wheelInfos[1].steering = this.stw;
+      delta = angle - this.settings.steering.stw;
+      
+      this.settings.steering.stw += delta / 7;
     
-      this.raycastVehicle.setSteeringValue((this.stw), 0);
-      this.raycastVehicle.setSteeringValue((this.stw), 1);
+      this.raycastVehicle.setSteeringValue((this.settings.steering.stw), 0);
+      this.raycastVehicle.setSteeringValue((this.settings.steering.stw), 1);
     }
     updateRearLights(){
       if (this.materials.lights.LR && this.materials.lights.RR){
@@ -278,7 +303,7 @@ class Vehicle {
       if (!this.physicWorld.isPaused){
         this.body.update();
         this.updateRaycastVehicle();
-        this.steeringControll(this.strAngle);
+        this.steeringControll(this.settings.steering.angle);
         this.updateLightHelper();
         for ( const wheel of Object.values(this.wheels)){
             wheel.updateBodyInfo();

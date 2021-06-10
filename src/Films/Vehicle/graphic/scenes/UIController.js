@@ -95,7 +95,7 @@ class UIController {
             currentScene.settings.controlsMaxDist = d;
             currentScene.changeControlMaxDist();
         });
-        scene.add(params,'cameraMaxAngle',0,Math.PI/2,0.01)
+        scene.add(params,'cameraMaxAngle',0,Math.PI,0.01)
         .onChange((a)=>{
             currentScene.settings.controlsMaxAngle = a;
             currentScene.changeControlMaxAngle();
@@ -123,6 +123,7 @@ class UIController {
             compression: currentScene.vehicle.wheelOptions.dampingCompression,
             relaxation: currentScene.vehicle.wheelOptions.dampingRelaxation,
             clearence: 0,
+            typeDrive: 'Full',
             headlights:{
                 visible: false,
                 intensity: 2,
@@ -165,6 +166,11 @@ class UIController {
         vehicle.add(params,'friction',0,20,1)
         .onChange((f)=>{
             currentScene.gui.changeVehicleFriction(f);
+        });
+
+        vehicle.add(params,'typeDrive',['Front','Rear','Full'])
+        .onChange((v)=>{
+            currentScene.gui.changeVehicleTypeDrive(v);
         });
 
             const headlights = vehicle.addFolder('Headlights');
@@ -274,30 +280,6 @@ class UIController {
         .onChange((color)=>{
             currentScene.gui.changeVehicleMaterialRimColor(color);
         });
-
-        
-/*
-
-            body:{
-                emissiveIntensity: currentScene.vehicle.materials.body.emissiveIntensity,
-                envMapIntensity: currentScene.vehicle.materials.body.envMapIntensity,
-                metalness: currentScene.vehicle.materials.body.metalness,
-                roughness: currentScene.vehicle.materials.body.roughness,
-                emissive: currentScene.vehicle.materials.body.emissive.getHex(),
-                color: currentScene.vehicle.materials.body.color.getHex(),
-            },
-      body_group.children[0].children[0].material.emissiveIntensity = settingVehicle.material.body.emissiveIntensity;
-      body_group.children[0].children[0].material.envMapIntensity = settingVehicle.material.body.envMapIntensity;
-      body_group.children[0].children[0].material.metalness = settingVehicle.material.body.metalness;
-      body_group.children[0].children[0].material.roughness = settingVehicle.material.body.roughness;
-      body_group.children[0].children[0].material.color.setHex(settingVehicle.material.body.color);
-      body_group.children[0].children[0].material.emissive.setHex(settingVehicle.material.body.emissive);
-
-
-*/
-
-
-
     }
     changeVisibleGUI(){
         const v = this.gui.domElement.style.visibility; 

@@ -14,7 +14,6 @@ class Wheel extends GObject{
     }
     init(){
         this.createBody();
-        //console.log(this.physicBody);
         this.graphic.physicMesh = this.createPhysicMesh();
         this.graphic.physicMesh.visible = false;
         this.addToPhysicWorld(this.physicBody);
@@ -26,14 +25,14 @@ class Wheel extends GObject{
         this.physicBody.quaternion.copy(t.quaternion);
     }
     createBody(){
-        let cylinderShape = new CANNON.Cylinder(this.dim.x/2, this.dim.x/2, this.dim.y, 24);
+        const cylinderShape = new CANNON.Cylinder(this.dim.x/2, this.dim.x/2, this.dim.y, 24);
         cylinderShape.drawData = {
             radius: this.dim.x/2,
             height: this.dim.y,
             segments: 24,
           };
         this.physicBody = new CANNON.Body({
-            mass: 5,
+            mass: this.mass,
             material: this.physicWorld.wheelMaterial,
         });
         this.physicBody.name = `${this.name} wheel`;
@@ -41,7 +40,7 @@ class Wheel extends GObject{
         this.physicBody.type = CANNON.Body.KINEMATIC;
         this.physicBody.collisionFilterGroup = 0; // turn off collisions
 
-        let q1 = new CANNON.Quaternion();
+        const q1 = new CANNON.Quaternion();
         q1.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 2);
         this.physicBody.addShape(cylinderShape, new CANNON.Vec3(), q1);
     }

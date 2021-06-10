@@ -14,14 +14,21 @@ class VehicleFilm extends Film{
         document.onkeyup = this.handler;
         document.film = this;
     }
-    handler(event){
-    let keyUp = (event.type == 'keyup');
-    switch(event.code){
-      case 'KeyV':
-        (keyUp) ? document.film.ui.changeVisibleGUI() : null ;
-        break;
-    }
+    handler(event){ 
+
+        let keyUp = (event.type == 'keyup');
+
+        switch(event.code){
+        case 'KeyV':
+            (keyUp) ? document.film.ui.changeVisibleGUI() : null ;
+            break;
+            case 'KeyL':
+                (keyUp) ? document.film.cores.graphic.currentScene.vehicle.changeBodyHeadlightsVisible() : null;
+                break;
+        }
+
         document.film.cores.graphic.currentScene.vehicle.handler(event);
+
     }
 }
 export { VehicleFilm };
