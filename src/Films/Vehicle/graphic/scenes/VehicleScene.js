@@ -16,6 +16,9 @@ class VehicleScene {
             controlsMaxDist : 45,
             controlsMaxAngle : 1.45,
         };
+        this.supports = {
+            RF: null
+        };
         this.init();
         return this;
     }
@@ -119,7 +122,7 @@ class VehicleScene {
 
         this.prepare = {
             vehicle: (model)=>{
-                console.log(model);
+                //console.log(model);
                 model.scene.traverse((child)=>{
                     if ( ! child.isMesh ) return;
                     let prevMaterial = child.material;
@@ -132,6 +135,11 @@ class VehicleScene {
 
                 const lightLF = this.foundMeshByName('f_l_light',model.scene.children);
                 const lightRF = this.foundMeshByName('f_r_light',model.scene.children);
+
+                const suppRF = this.foundMeshByName('frSup',model.scene.children);
+
+                this.supports.RF = suppRF;
+
 
                 const lightRR = this.foundMeshByName('r_r_light',model.scene.children);
                 const lightLR = this.foundMeshByName('r_l_light',model.scene.children);
@@ -204,8 +212,12 @@ class VehicleScene {
                 this.vehicle.wheels.RR.name = 'RR';
                 this.vehicle.wheels.LR.name = 'LR';
 
-                console.log(this.vehicle);
-                console.log(this.ground);
+                this.supports.RF.rotateX(-Math.PI/2);
+                this.supports.RF.rotateY(Math.PI/2);
+                this.supports.RF.rotateZ(Math.PI/2);
+
+                //this.scene.add(this.supports.RF);
+
 
             },
             ground_color: (map)=>{
@@ -458,6 +470,17 @@ class VehicleScene {
         this.vehicle.update();
     }
     update(fi){
+        // if (this.supports.RF) {
+        //     this.supports.RF.position.copy(this.vehicle.body.position);
+        //     // this.supports.RF.rotation.x = -Math.PI/2;
+        //     // this.supports.RF.rotation.y = -Math.PI/2;
+        //     // this.supports.RF.rotation.z = this.vehicle.settings.steering.stw + Math.PI/2;
+        //     // this.supports.RF.rotation.copy(this.vehicle.wheels.RF.rotation);
+        //      //this.supports.RF.quaternion.copy(this.vehicle.wheels.RF.quaternion);
+        //     //  this.supports.RF.rotation.x = -Math.PI/2;
+        //     //  this.supports.RF.rotation.y = 0;
+        //     //  this.supports.RF.rotation.z = this.vehicle.settings.steering.stw + Math.PI/2;
+        // }
         this.updateActors();
         this.updateScene();
         this.controls.target.set(this.vehicle.body.position.x,this.vehicle.body.position.y,this.vehicle.body.position.z);

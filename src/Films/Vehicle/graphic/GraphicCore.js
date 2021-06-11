@@ -3,12 +3,15 @@ import * as THREE from "three";
 import { GraphicLoader } from "./GraphicLoader";
 import { Core } from "../../../cores/Core";
 import { VehicleScene } from "./scenes/VehicleScene";
+import { LoaderIndicator } from "./LoaderIndicator";
 
 class GraphicCore extends Core{
     constructor(element=null,resources=null,ui=null){
         super();
         this.name = 'three.js app';
         this.domElement = element;
+        this.useCssLoader = true;
+        this.cssLoaderBar = null;
         this.loader = new GraphicLoader(resources);
         this.currentScene = null;
         this.appConfig = {
@@ -18,15 +21,26 @@ class GraphicCore extends Core{
             speed: 0.001,
             fi: 0,
         };
+        this.guideMenu = null;
         this.currentPhysicWorld = null;
         this.ui = ui;
-        this.prepareCanvas();
+        
         return this; 
     }
     getPhysicWorld(world){
         this.currentPhysicWorld = world;
     }
     init(){
+        if (!this.useCssLoader){
+            this.prepareCanvas(this.domElement);
+            this.domElement.appendChild(this.canvas);
+        } else {
+            this.cssLoaderBar = new LoaderIndicator(this.domElement);
+            this.prepareCanvas(this.domElement);
+            this.canvas.style.display = 'none';
+            this.cssLoaderBar.addElementToHolder(this.canvas);
+        }
+       
        this.renderer = new THREE.WebGLRenderer({
            canvas: this.canvas,
            antialias: true,
@@ -63,6 +77,10 @@ class GraphicCore extends Core{
             this.canvas.height = window.innerHeight;
             
         } else {
+            if (this.useCssLoader){
+                this.cssLoaderBar.holder.style.width = `${this.domElement.clientWidth}px`; // 100%
+                this.cssLoaderBar.holder.style.height = `${this.domElement.clientHeight}px`; // 100%
+            }
             this.canvas.width = this.domElement.clientWidth;
             this.canvas.height = this.domElement.clientHeight;
         }
@@ -82,29 +100,117 @@ class GraphicCore extends Core{
             });
 
             this.loader.on('load',(result)=>{
+                if (this.useCssLoader){
+                    this.finishLoad();
+                    this.createGuideMenu();
+                } 
+
                 this.currentScene.assetes = result;
                 this.currentScene.loadAllAssets();
                 this.ui.init();
-                //console.log(this.currentScene.ground);
             });
 
             this.loader.load();
 
         }
     }
-    prepareCanvas(){
+    finishLoad(){
+        this.cssLoaderBar.loaderElem.style.display = 'none';
+        this.canvas.style.display = 'block';
+        this.resize();
+    }
+    chageStatusGuideMenu(status = ''){
+        this.guideMenu.style.visibility = status;
+    }
+    createGuideMenu(){
+        this.guideMenu = document.createElement('div');
+        this.guideMenu.className = 'guide';
+
+        this.guideMenu.style.position = 'fixed';
+        this.guideMenu.style.zIndex = '999';
+        this.guideMenu.style.top = '0';
+        this.guideMenu.style.left = '0';
+        this.guideMenu.style.margin = '5px';
+
+        this.cssLoaderBar.holder.appendChild(this.guideMenu);
+
+
+        this.text = {
+            guide: { 
+                element: document.createElement('p'),
+                textContent: 'GUIDE',
+            },
+            w: { 
+                element: document.createElement('p'),
+                textContent: 'W - Forward',
+            },
+            a: { 
+                element: document.createElement('p'),
+                textContent: 'A - Turn Left',
+            },
+            s: { 
+                element: document.createElement('p'),
+                textContent: 'S - Stop/Backward',
+            },
+            d: { 
+                element: document.createElement('p'),
+                textContent: 'D - Turn Right',
+            },
+            l: { 
+                element: document.createElement('p'),
+                textContent: 'L - On/Off Headlights',
+            },
+            v: {
+                element: document.createElement('p'),
+                textContent: 'V - On/Off Controls',
+            },
+            space: {
+                element: document.createElement('p'),
+                textContent: 'Space - Handbreake',
+            },
+            r: {
+                element: document.createElement('p'),
+                textContent: 'R - Reset vehicle',
+            },
+
+        }
+        this.text.w.element.textContent = this.text.w.textContent;
+        this.guideMenu.appendChild(this.text.w.element);
+
+        this.text.a.element.textContent = this.text.a.textContent;
+        this.guideMenu.appendChild(this.text.a.element);
+
+        this.text.s.element.textContent = this.text.s.textContent;
+        this.guideMenu.appendChild(this.text.s.element);
+
+        this.text.d.element.textContent = this.text.d.textContent;
+        this.guideMenu.appendChild(this.text.d.element);
+
+        this.text.r.element.textContent = this.text.r.textContent;
+        this.guideMenu.appendChild(this.text.r.element);
+
+        this.text.l.element.textContent = this.text.l.textContent;
+        this.guideMenu.appendChild(this.text.l.element);
+
+        this.text.v.element.textContent = this.text.v.textContent;
+        this.guideMenu.appendChild(this.text.v.element);
+
+        this.text.space.element.textContent = this.text.space.textContent;
+        this.guideMenu.appendChild(this.text.space.element);
+    }
+    prepareCanvas(inpElement){
         this.canvas = document.createElement('canvas');
         this.canvas.id = 'canvas';
 
-        if (!this.domElement){
-            this.canvas.width = window.innerWidth;
-            this.canvas.height = window.innerHeight;
-            document.body.appendChild(this.canvas);
-            return;
-        }
-        this.canvas.width = this.domElement.clientWidth;
-        this.canvas.height = this.domElement.clientHeight;
-        this.domElement.appendChild(this.canvas);
+        // if (!this.domElement){
+        //     this.canvas.width = window.innerWidth;
+        //     this.canvas.height = window.innerHeight;
+        //     document.body.appendChild(this.canvas);
+        //     return;
+        // }
+        this.canvas.width = inpElement.clientWidth;
+        this.canvas.height = inpElement.clientHeight;
+        //inpElement.appendChild(this.canvas);
     }
 }
 

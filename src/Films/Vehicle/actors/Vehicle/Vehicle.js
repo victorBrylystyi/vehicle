@@ -146,7 +146,6 @@ class Vehicle {
 
     handler(event){
       const keyUp = (event.type == 'keyup');
-
       switch(event.code){
         case 'KeyW':
           this.setEngineForce(keyUp ? 0 : -this.settings.maxEngineForce);

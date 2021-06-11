@@ -20,9 +20,11 @@ class Body extends GObject{
     }
     createBody(){
         let chassisShape = new CANNON.Box(new CANNON.Vec3(this.dim.x/2.1, this.dim.y/2.5, this.dim.z/3));
+
         this.physicBody = new CANNON.Body({ 
             mass: this.mass, 
         });
+        
         this.physicBody.name = 'vehicle body';
         this.physicBody.addShape(chassisShape);
         this.physicBody.position.set(11, 15, 4);
@@ -32,6 +34,7 @@ class Body extends GObject{
         this.physicBody.angularVelocity.set(0, 0, 0.5);
     }
     createHeadlights(){
+
         this.headLights = {
             LF: new THREE.SpotLight(),
             RF: new THREE.SpotLight(),

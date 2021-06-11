@@ -56,7 +56,7 @@ class UIController {
         .onChange((x)=>{
             physic.world.gravity.x = x;
         });
-        gravity.add(params.gravity,'gy',-20,20,0.01)
+        gravity.add(params.gravity,'gy',-25,20,0.01)
         .onChange((y)=>{
             physic.world.gravity.y = y;
         });
@@ -285,10 +285,11 @@ class UIController {
         const v = this.gui.domElement.style.visibility; 
         if (v == 'visible'){
             this.gui.domElement.style.visibility = 'hidden';
+            if(this.film.cores.graphic.guideMenu) this.film.cores.graphic.chageStatusGuideMenu('hidden');
         } else if (v == 'hidden'){
             this.gui.domElement.style.visibility = 'visible';
+            if(this.film.cores.graphic.guideMenu) this.film.cores.graphic.chageStatusGuideMenu('visible'); 
         }
-        //(v) ? this.gui.domElement.style.visibility = 'visible' : this.gui.domElement.style.visibility = 'hidden';
     }
 }
 
