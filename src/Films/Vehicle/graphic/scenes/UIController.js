@@ -152,6 +152,9 @@ class UIController {
                 emissive: currentScene.vehicle.materials.rim.LF.emissive.getHex(),
                 color: currentScene.vehicle.materials.rim.LF.color.getHex(),
             },
+            supp:{
+                color: currentScene.vehicle.materials.supports.LF.color.getHex(),
+            }
         };
         const vehicle = this.gui.addFolder('Vehicle');
 
@@ -178,6 +181,7 @@ class UIController {
             const materials = vehicle.addFolder('Materials');
                 const body = materials.addFolder('Body');
                 const rim = materials.addFolder('Rim');
+                const supports = materials.addFolder('Supports');
 
                 
 
@@ -279,6 +283,11 @@ class UIController {
         rim.addColor(params.rim,'color')
         .onChange((color)=>{
             currentScene.gui.changeVehicleMaterialRimColor(color);
+        });
+
+        supports.addColor(params.supp,'color')
+        .onChange((color)=>{
+            currentScene.gui.changeVehicleMaterialSuppColor(color);
         });
     }
     changeVisibleGUI(){

@@ -1,7 +1,7 @@
 import * as CANNON from "cannon";
 import { Body } from "./Body";
 import { Wheel } from "./Wheel";
-
+import * as THREE from "three";
 
 class Vehicle {
     constructor(physicWorld,cntrls){
@@ -36,6 +36,13 @@ class Vehicle {
             LF: null,
             RF: null,
           },
+          supports: {
+            LF: null,
+            RF: null,
+            LR: null,
+            RR: null,
+          },
+
         };
         this.settings = {
           maxEngineForce: 5000,
@@ -48,7 +55,12 @@ class Vehicle {
             front: false,
             rear: false,
             full: true,
-          }
+          },
+          turnLightsHelper:{
+            operation:0,
+            turnColor: new THREE.Color(0xFF0000),
+            defColor: new THREE.Color(0x000000),
+          },
         };
         this.connectionPointsWheels = {
           LF: new CANNON.Vec3(13.6, 6.9, -3.3),
@@ -56,6 +68,12 @@ class Vehicle {
           LR: new CANNON.Vec3(-10, 6.7, -3.3),
           RR: new CANNON.Vec3(-10, -6.7, -3.3)
         };
+        this.supports = {
+          RF: null,
+          LF: null,
+          RR: null,
+          LR: null
+      };
         this.init();
         return this;
     }
@@ -74,6 +92,7 @@ class Vehicle {
         suspensionStiffness: 30,
         suspensionRestLength: 0.3,
         frictionSlip: 7,
+        sliding: false,
         dampingRelaxation: 1.5, // 2.3  gui 
         dampingCompression: 1.5,//4.4 gui 
         maxSuspensionForce: 100000,
@@ -110,8 +129,13 @@ class Vehicle {
         this.body.headLights.LF.visible = !this.body.headLights.LF.visible;
         this.body.headLights.RF.visible = !this.body.headLights.RF.visible;
 
-        (this.body.headLights.LF.visible) ? this.materials.lights.LF.emissive.setHex(0xffffff) : 
-        this.materials.lights.LF.emissive.setHex(0x000000);
+        if (this.body.headLights.LF.visible){
+          this.materials.lights.LF.emissive.setHex(0xffffff);
+          this.settings.turnLightsHelper.defColor.setHex(0xffffff);
+        } else {
+          this.materials.lights.LF.emissive.setHex(0x000000);
+          this.settings.turnLightsHelper.defColor.setHex(0x000000);
+        }
 
         (this.body.headLights.RF.visible) ? this.materials.lights.RF.emissive.setHex(0xffffff) : 
         this.materials.lights.RF.emissive.setHex(0x000000);
@@ -269,6 +293,41 @@ class Vehicle {
           }
       }
     }
+    turnLightControl(headlight){
+      switch (this.settings.turnLightsHelper.operation){
+        case 0:
+          headlight.emissive.setHex(this.settings.turnLightsHelper.defColor.getHex());
+          headlight.emissiveIntensity = 2;
+          setTimeout(()=>{ 
+            headlight.emissive.setHex(this.settings.turnLightsHelper.turnColor.getHex());
+            headlight.emissiveIntensity = 2;
+            setTimeout(()=>{
+              this.settings.turnLightsHelper.operation = 0;
+            },1000);
+          },1000);
+          this.settings.turnLightsHelper.operation = 1;
+          break;
+    };
+    }
+    updateTurnLights(){
+      if (this.settings.steering.angle !== 0 && this.materials.lights.LF){
+        if (this.settings.steering.angle > 0){
+          this.turnLightControl(this.materials.lights.LF);
+        } else if (this.settings.steering.angle < 0){
+          this.turnLightControl(this.materials.lights.RF);
+        }
+      } else {
+        this.settings.turnLightsHelper.operation = 0;
+        if (this.materials.lights.LF && this.materials.lights.RF) {
+          this.materials.lights.LF.emissiveIntensity = 1;
+          this.materials.lights.RF.emissiveIntensity = 1;
+          this.materials.lights.LF.emissive.setHex(this.settings.turnLightsHelper.defColor.getHex());
+          this.materials.lights.RF.emissive.setHex(this.settings.turnLightsHelper.defColor.getHex());
+        }
+        
+      }
+
+    }
 
     createRaycastVehicle(){
 
@@ -303,6 +362,8 @@ class Vehicle {
         this.body.update();
         this.updateRaycastVehicle();
         this.steeringControll(this.settings.steering.angle);
+        this.updateSupports();
+        this.updateTurnLights();
         this.updateLightHelper();
         for ( const wheel of Object.values(this.wheels)){
             wheel.updateBodyInfo();
@@ -314,6 +375,17 @@ class Vehicle {
     updateRaycastVehicle(){
       for (let i=0;i<this.raycastVehicle.wheelInfos.length;i++){
         this.raycastVehicle.updateWheelTransform(i);
+      }
+    }
+    updateSupports(){
+      if (this.supports.LF && this.supports.RF && this.supports.LR && this.supports.RR){
+        this.supports.LF.position.copy(this.raycastVehicle.wheelInfos[0].chassisConnectionPointLocal);
+        this.supports.RF.position.copy(this.raycastVehicle.wheelInfos[1].chassisConnectionPointLocal);
+        this.supports.LR.position.copy(this.raycastVehicle.wheelInfos[2].chassisConnectionPointLocal);
+        this.supports.RR.position.copy(this.raycastVehicle.wheelInfos[3].chassisConnectionPointLocal);
+
+        this.supports.LF.rotation.y = -this.settings.steering.stw - Math.PI/2;
+        this.supports.RF.rotation.y = -this.settings.steering.stw - Math.PI/2;
       }
     }
 
@@ -357,7 +429,12 @@ class Vehicle {
         this.raycastVehicle.wheelInfos[i].dampingRelaxation = dR;
       }
     }
-
+    changeMaterialSuppColor(color){
+      this.materials.supports.LF.color.setHex(color);
+      this.materials.supports.RF.color.setHex(color);
+      this.materials.supports.LR.color.setHex(color);
+      this.materials.supports.RR.color.setHex(color);
+    }
     changeMaterialBodyEI(i){
       this.materials.body.emissiveIntensity = i;
     }

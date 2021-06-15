@@ -136,9 +136,9 @@ class GraphicCore extends Core{
 
 
         this.text = {
-            guide: { 
+            wasd: { 
                 element: document.createElement('p'),
-                textContent: 'GUIDE',
+                textContent: 'W, A, S, D - Movement controls',
             },
             w: { 
                 element: document.createElement('p'),
@@ -173,18 +173,21 @@ class GraphicCore extends Core{
                 textContent: 'R - Reset vehicle',
             },
 
-        }
-        this.text.w.element.textContent = this.text.w.textContent;
-        this.guideMenu.appendChild(this.text.w.element);
+        };
+        this.text.wasd.element.textContent = this.text.wasd.textContent;
+        this.guideMenu.appendChild(this.text.wasd.element);
 
-        this.text.a.element.textContent = this.text.a.textContent;
-        this.guideMenu.appendChild(this.text.a.element);
+        // this.text.w.element.textContent = this.text.w.textContent;
+        // this.guideMenu.appendChild(this.text.w.element);
 
-        this.text.s.element.textContent = this.text.s.textContent;
-        this.guideMenu.appendChild(this.text.s.element);
+        // this.text.a.element.textContent = this.text.a.textContent;
+        // this.guideMenu.appendChild(this.text.a.element);
 
-        this.text.d.element.textContent = this.text.d.textContent;
-        this.guideMenu.appendChild(this.text.d.element);
+        // this.text.s.element.textContent = this.text.s.textContent;
+        // this.guideMenu.appendChild(this.text.s.element);
+
+        // this.text.d.element.textContent = this.text.d.textContent;
+        // this.guideMenu.appendChild(this.text.d.element);
 
         this.text.r.element.textContent = this.text.r.textContent;
         this.guideMenu.appendChild(this.text.r.element);

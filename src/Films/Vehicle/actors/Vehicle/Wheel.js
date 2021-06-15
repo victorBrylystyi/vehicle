@@ -20,7 +20,7 @@ class Wheel extends GObject{
         this.add(this.graphic.physicMesh);
     }
     updateBodyInfo(){
-        let t = this.raycastVehicleWheel.worldTransform;
+        const t = this.raycastVehicleWheel.worldTransform;
         this.physicBody.position.copy(t.position);
         this.physicBody.quaternion.copy(t.quaternion);
     }
@@ -30,7 +30,7 @@ class Wheel extends GObject{
             radius: this.dim.x/2,
             height: this.dim.y,
             segments: 24,
-          };
+        };
         this.physicBody = new CANNON.Body({
             mass: this.mass,
             material: this.physicWorld.wheelMaterial,

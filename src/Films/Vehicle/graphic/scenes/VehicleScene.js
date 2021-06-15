@@ -16,9 +16,6 @@ class VehicleScene {
             controlsMaxDist : 45,
             controlsMaxAngle : 1.45,
         };
-        this.supports = {
-            RF: null
-        };
         this.init();
         return this;
     }
@@ -122,7 +119,6 @@ class VehicleScene {
 
         this.prepare = {
             vehicle: (model)=>{
-                //console.log(model);
                 model.scene.traverse((child)=>{
                     if ( ! child.isMesh ) return;
                     let prevMaterial = child.material;
@@ -137,8 +133,28 @@ class VehicleScene {
                 const lightRF = this.foundMeshByName('f_r_light',model.scene.children);
 
                 const suppRF = this.foundMeshByName('frSup',model.scene.children);
+                const suppLF = this.foundMeshByName('lfSup',model.scene.children);
+                const suppRR = this.foundMeshByName('rrSup',model.scene.children);
+                const suppLR = this.foundMeshByName('rlSup',model.scene.children);
 
-                this.supports.RF = suppRF;
+                this.vehicle.materials.supports.RF = this.foundMaterialInGroupByName('Material.001', suppRF);
+                this.vehicle.materials.supports.LF = this.foundMaterialInGroupByName('Material.001', suppLF);
+                this.vehicle.materials.supports.RR = this.foundMaterialInGroupByName('Material.001', suppRR);
+                this.vehicle.materials.supports.LR = this.foundMaterialInGroupByName('Material.001', suppLR);
+
+                // for (const support of this.vehicle.materials.supports){
+                //     console.log(support);
+                //     support.envMapIntensity = 1.4
+                // }
+                this.vehicle.materials.supports.RF.envMapIntensity = 1.4;
+                this.vehicle.materials.supports.LF.envMapIntensity = 1.4;
+                this.vehicle.materials.supports.RR.envMapIntensity = 1.4;
+                this.vehicle.materials.supports.LR.envMapIntensity = 1.4;
+
+                this.vehicle.supports.RF = suppRF;
+                this.vehicle.supports.LF = suppLF;
+                this.vehicle.supports.RR = suppRR;
+                this.vehicle.supports.LR = suppLR;
 
 
                 const lightRR = this.foundMeshByName('r_r_light',model.scene.children);
@@ -147,8 +163,6 @@ class VehicleScene {
 
                 const matLightRF = this.foundMaterialInGroupByName("righTurnLight", lightRF);
                 const matLightLF = this.foundMaterialInGroupByName("leftTurnLight", lightLF);
-
-                //console.log(matLightRF);
 
                 matLightLF.emissive.setHex(0x000000);
                 matLightRF.emissive.setHex(0x000000);
@@ -171,6 +185,10 @@ class VehicleScene {
                     lightLR,
                     lightRR,
                     lightRF,
+                    this.vehicle.supports.RF,
+                    this.vehicle.supports.LF,
+                    this.vehicle.supports.RR,
+                    this.vehicle.supports.LR,
                 );
                 this.vehicle.body.createHeadlights();
                 this.vehicle.body.setLightsPositions();
@@ -212,13 +230,7 @@ class VehicleScene {
                 this.vehicle.wheels.RR.name = 'RR';
                 this.vehicle.wheels.LR.name = 'LR';
 
-                this.supports.RF.rotateX(-Math.PI/2);
-                this.supports.RF.rotateY(Math.PI/2);
-                this.supports.RF.rotateZ(Math.PI/2);
-
-                //this.scene.add(this.supports.RF);
-
-
+                console.log(this.vehicle);
             },
             ground_color: (map)=>{
                 this.ground.addMapToMatarial(map);
@@ -372,6 +384,10 @@ class VehicleScene {
                 this.vehicle.changeTypeDrive(type);
             },
 
+            changeVehicleMaterialSuppColor: (color)=>{
+                this.vehicle.changeMaterialSuppColor(color);
+            },
+
         };
 
         this.scene.add(this.ground);
@@ -470,17 +486,6 @@ class VehicleScene {
         this.vehicle.update();
     }
     update(fi){
-        // if (this.supports.RF) {
-        //     this.supports.RF.position.copy(this.vehicle.body.position);
-        //     // this.supports.RF.rotation.x = -Math.PI/2;
-        //     // this.supports.RF.rotation.y = -Math.PI/2;
-        //     // this.supports.RF.rotation.z = this.vehicle.settings.steering.stw + Math.PI/2;
-        //     // this.supports.RF.rotation.copy(this.vehicle.wheels.RF.rotation);
-        //      //this.supports.RF.quaternion.copy(this.vehicle.wheels.RF.quaternion);
-        //     //  this.supports.RF.rotation.x = -Math.PI/2;
-        //     //  this.supports.RF.rotation.y = 0;
-        //     //  this.supports.RF.rotation.z = this.vehicle.settings.steering.stw + Math.PI/2;
-        // }
         this.updateActors();
         this.updateScene();
         this.controls.target.set(this.vehicle.body.position.x,this.vehicle.body.position.y,this.vehicle.body.position.z);
