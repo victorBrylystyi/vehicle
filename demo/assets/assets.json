@@ -19,19 +19,6 @@
                 ]
     },
     {
-        "type": "env",
-        "name": "v2",
-        "path": "./assets/env/v2/",
-        "url": [              
-                "px.png",
-                "nx.png",
-                "py.png",
-                "ny.png",
-                "pz.png",
-                "nz.png"
-                ]
-    },
-    {
         "type": "texture",
         "name": "ground_color",
         "path": "./assets/ground/Tiles/",
