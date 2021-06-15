@@ -39,8 +39,8 @@ module.exports = {
 					to: 'libs'
 				},
 				{
-					from: 'favicon.ico',
-					to: 'favicon.ico'
+					from: 'favicon.svg',
+					to: 'favicon.svg'
 				}
 			]
 		} )

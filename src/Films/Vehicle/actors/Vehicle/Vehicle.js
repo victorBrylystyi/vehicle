@@ -4,8 +4,9 @@ import { Wheel } from './Wheel';
 import * as THREE from 'three';
 
 class Vehicle {
-	constructor( physicWorld, cntrls ) {
+	constructor( physicWorld, cntrls, timer ) {
 		this.physicWorld = physicWorld;
+		this.timer = timer;
 		this.controls = cntrls;
 		this.bodyMass = 1700;
 		this.wheelMass = 30;
@@ -34,7 +35,11 @@ class Vehicle {
 				LR: null,
 				RR: null,
 				LF: null,
-				RF: null
+				RF: null,
+				rearTurns: {
+					L: null,
+					R: null
+				}
 			},
 			supports: {
 				LF: null,
@@ -58,8 +63,13 @@ class Vehicle {
 			},
 			turnLightsHelper: {
 				operation: 0,
-				turnColor: new THREE.Color( 0xFF0000 ),
-				defColor: new THREE.Color( 0x000000 )
+				mainOperation: 0,
+				turnColor: new THREE.Color( 0xFF6C00 ),
+				turnEmmisive: new THREE.Color( 0xFF0000 ),
+				defColor: new THREE.Color( 0x000000 ),
+				defEmissive: new THREE.Color( 0x00000 ),
+				defColorRear: new THREE.Color( 0x000000 ),
+				defEmissiveRear: new THREE.Color( 0x00000 )
 			}
 		};
 		this.connectionPointsWheels = {
@@ -210,8 +220,6 @@ class Vehicle {
 				this.setSteeringAngle();
 			}
 
-			// keyUp ? this.settings.steering.angle = 0
-			// 	: ( this.settings.steering.angle < 0.55 ) ? this.setSteeringAngle( 0.1 ) : this.setSteeringAngle();
 			break;
 		case 'KeyD':
 			if ( keyUp ) {
@@ -222,8 +230,6 @@ class Vehicle {
 				this.setSteeringAngle();
 			}
 
-			// keyUp ? this.settings.steering.angle = 0
-			// 	: ( this.settings.steering.angle > -0.55 ) ? this.setSteeringAngle( -0.1 ) : this.setSteeringAngle();
 			break;
 		case 'KeyR':
 			this.resetVehicle();
@@ -344,40 +350,118 @@ class Vehicle {
 		}
 	}
 
-	turnLightControl( headlight ) {
+	turnLightControl( headlight, rear ) {
 		switch ( this.settings.turnLightsHelper.operation ) {
 		case 0:
-			headlight.emissive.setHex( this.settings.turnLightsHelper.defColor.getHex() );
-			headlight.emissiveIntensity = 2;
-			setTimeout( () => {
-				headlight.emissive.setHex( this.settings.turnLightsHelper.turnColor.getHex() );
-				headlight.emissiveIntensity = 2;
-				setTimeout( () => {
-					this.settings.turnLightsHelper.operation = 0;
-				}, 1000 );
-			}, 1000 );
+			headlight.color.setHex( this.settings.turnLightsHelper.defColor.getHex() );
+			headlight.emissive.setHex( this.settings.turnLightsHelper.defEmissive.getHex() );
+			headlight.envMapIntensity = 1;
+			headlight.emissiveIntensity = 1;
+
+			rear.color.setHex( this.settings.turnLightsHelper.defColorRear.getHex() );
+			rear.emissive.setHex( this.settings.turnLightsHelper.defEmissiveRear.getHex() );
+			rear.envMapIntensity = 1;
+			rear.emissiveIntensity = 1;
+
 			this.settings.turnLightsHelper.operation = 1;
+			break;
+		case 1:
+			if ( this.timer.pulseHerz._2_.pulse ) {
+				headlight.color.setHex( this.settings.turnLightsHelper.turnColor.getHex() );
+				headlight.emissive.setHex( this.settings.turnLightsHelper.turnEmmisive.getHex() );
+				headlight.envMapIntensity = 2;
+				headlight.emissiveIntensity = 2;
+
+				rear.color.setHex( this.settings.turnLightsHelper.turnColor.getHex() );
+				rear.emissive.setHex( this.settings.turnLightsHelper.turnEmmisive.getHex() );
+				rear.envMapIntensity = 2;
+				rear.emissiveIntensity = 2;
+
+				this.settings.turnLightsHelper.operation = 2;
+			}
+
+			break;
+		case 2:
+			if ( this.timer.pulseHerz._2_.pulse ) {
+				headlight.color.setHex( this.settings.turnLightsHelper.defColor.getHex() );
+				headlight.emissive.setHex( this.settings.turnLightsHelper.defEmissive.getHex() );
+				headlight.envMapIntensity = 1;
+				headlight.emissiveIntensity = 1;
+
+				rear.color.setHex( this.settings.turnLightsHelper.defColorRear.getHex() );
+				rear.emissive.setHex( this.settings.turnLightsHelper.defEmissiveRear.getHex() );
+				rear.envMapIntensity = 1;
+				rear.emissiveIntensity = 1;
+
+				this.settings.turnLightsHelper.operation = 1;
+			}
+
 			break;
 		default: break;
 		}
 	}
 
 	updateTurnLights() {
-		if ( this.settings.steering.angle !== 0 && this.materials.lights.LF ) {
-			if ( this.settings.steering.angle > 0 ) {
-				this.turnLightControl( this.materials.lights.LF );
-			} else if ( this.settings.steering.angle < 0 ) {
-				this.turnLightControl( this.materials.lights.RF );
-			}
-		} else {
-			this.settings.turnLightsHelper.operation = 0;
-			if ( this.materials.lights.LF && this.materials.lights.RF ) {
-				this.materials.lights.LF.emissiveIntensity = 1;
-				this.materials.lights.RF.emissiveIntensity = 1;
-				this.materials.lights.LF.emissive.setHex( this.settings.turnLightsHelper.defColor.getHex() );
-				this.materials.lights.RF.emissive.setHex( this.settings.turnLightsHelper.defColor.getHex() );
+
+		switch ( this.settings.turnLightsHelper.mainOperation ) {
+		case 0:
+			if ( this.settings.steering.angle !== 0 && this.materials.lights.LF ) {
+
+				this.settings.turnLightsHelper.defColor.setHex( this.materials.lights.LF.color.getHex() );
+				this.settings.turnLightsHelper.defEmissive.setHex( this.materials.lights.LF.emissive.getHex() );
+				this.settings.turnLightsHelper.defColorRear.setHex( this.materials.lights.rearTurns.L.color.getHex() );
+				// eslint-disable-next-line max-len
+				this.settings.turnLightsHelper.defEmissiveRear.setHex( this.materials.lights.rearTurns.L.emissive.getHex() );
+
+				if ( this.settings.steering.angle > 0 ) {
+					this.settings.turnLightsHelper.mainOperation = 1;
+				} else if ( this.settings.steering.angle < 0 ) {
+					this.settings.turnLightsHelper.mainOperation = 2;
+				}
 			}
 
+			break;
+		case 1:
+			if ( this.settings.steering.angle === 0 ) {
+				this.settings.turnLightsHelper.mainOperation = 3;
+			}
+
+			this.turnLightControl( this.materials.lights.LF, this.materials.lights.rearTurns.L );
+			break;
+		case 2:
+			if ( this.settings.steering.angle === 0 ) {
+				this.settings.turnLightsHelper.mainOperation = 3;
+			}
+
+			this.turnLightControl( this.materials.lights.RF, this.materials.lights.rearTurns.R );
+			break;
+		case 3:
+			this.materials.lights.LF.emissiveIntensity = 1;
+			this.materials.lights.RF.emissiveIntensity = 1;
+			this.materials.lights.LF.envMapIntensity = 1;
+			this.materials.lights.RF.envMapIntensity = 1;
+			this.materials.lights.LF.color.setHex( this.settings.turnLightsHelper.defColor.getHex() );
+			this.materials.lights.RF.color.setHex( this.settings.turnLightsHelper.defColor.getHex() );
+			this.materials.lights.LF.emissive.setHex( this.settings.turnLightsHelper.defEmissive.getHex() );
+			this.materials.lights.RF.emissive.setHex( this.settings.turnLightsHelper.defEmissive.getHex() );
+
+			this.materials.lights.rearTurns.L.emissiveIntensity = 1;
+			this.materials.lights.rearTurns.R.emissiveIntensity = 1;
+			this.materials.lights.rearTurns.L.envMapIntensity = 1;
+			this.materials.lights.rearTurns.R.envMapIntensity = 1;
+			this.materials.lights.rearTurns.L.color.setHex( this.settings.turnLightsHelper.defColorRear.getHex() );
+			this.materials.lights.rearTurns.R.color.setHex( this.settings.turnLightsHelper.defColorRear.getHex() );
+			// eslint-disable-next-line max-len
+			this.materials.lights.rearTurns.L.emissive.setHex( this.settings.turnLightsHelper.defEmissiveRear.getHex() );
+			// eslint-disable-next-line max-len
+			this.materials.lights.rearTurns.R.emissive.setHex( this.settings.turnLightsHelper.defEmissiveRear.getHex() );
+
+
+			this.settings.turnLightsHelper.mainOperation = 0;
+			this.settings.turnLightsHelper.operation = 0;
+			break;
+
+		default: break;
 		}
 
 	}

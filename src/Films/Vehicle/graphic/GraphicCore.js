@@ -5,6 +5,7 @@ import { GraphicLoader } from './GraphicLoader';
 import { Core } from '../../../cores/Core';
 import { VehicleScene } from './scenes/VehicleScene';
 import { LoaderIndicator } from './LoaderIndicator';
+import { Timer } from './Timer';
 
 class GraphicCore extends Core {
 	constructor( element = null, resources = null, ui = null ) {
@@ -22,6 +23,7 @@ class GraphicCore extends Core {
 			speed: 0.001,
 			fi: 0
 		};
+		this.timer = null;
 		this.guideMenu = null;
 		this.currentPhysicWorld = null;
 		this.ui = ui;
@@ -34,6 +36,7 @@ class GraphicCore extends Core {
 	}
 
 	init() {
+		this.timer = new Timer();
 		if ( this.useCssLoader ) {
 			this.cssLoaderBar = new LoaderIndicator( this.domElement );
 			this.prepareCanvas( this.domElement );
@@ -54,7 +57,7 @@ class GraphicCore extends Core {
 		window.addEventListener( 'resize', () => {
 			this.resize();
 		} );
-		this.currentScene = new VehicleScene( this.canvas, this.currentPhysicWorld );
+		this.currentScene = new VehicleScene( this.canvas, this.currentPhysicWorld, this.timer );
 
 		console.log( 'THREE done init' );
 	}
@@ -62,16 +65,28 @@ class GraphicCore extends Core {
 	preStart() {
 		this.startLoadAssets();
 		this.threeClock.start();
+		if ( this.timer ) {
+			this.timer.preStart();
+		}
+
 		console.log( 'THREE done prestart' );
 	}
 
 	update() {
+		if ( this.timer ) {
+			this.timer.update();
+		}
+
 		this.animate();
 	}
 
 	postStart() {
 		this.threeClock.stop();
+		if ( this.timer ) {
+			this.timer.postStart();
+		}
 	}
+
 
 	animate() {
 		this.appConfig.fi += this.appConfig.speed * this.threeClock.getDelta() * this.appConfig.fps;
