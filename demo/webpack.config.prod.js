@@ -33,6 +33,14 @@ module.exports = {
 				{
 					from: 'assets',
 					to: 'assets'
+				},
+				{
+					from: 'libs',
+					to: 'libs'
+				},
+				{
+					from: 'favicon.ico',
+					to: 'favicon.ico'
 				}
 			]
 		} )
