@@ -1,39 +1,47 @@
-import { Film } from "../../cores/Film";
-import { GraphicCore } from "./graphic/GraphicCore";
-import { LoaderIndicator } from "./graphic/LoaderIndicator";
-import { UIController } from "./graphic/scenes/UIController";
-import { PhysicCore } from "./physic/PhysicCore";
+import { Film } from '../../cores/Film';
+import { GraphicCore } from './graphic/GraphicCore';
+// import { LoaderIndicator } from './graphic/LoaderIndicator';
+import { UIController } from './graphic/scenes/UIController';
+import { PhysicCore } from './physic/PhysicCore';
 
 
-class VehicleFilm extends Film{
-    constructor(display,resources){
-        super();
-        // this.settings = {
-        //     useCssLoader: false,
-        // };
-        // this.loaderBar = new LoaderIndicator(display);
-        this.ui = new UIController(this);
-        this.cores.graphic = new GraphicCore(display,resources,this.ui);
-        this.cores.physic = new PhysicCore();
-        document.onkeydown = this.handler;
-        document.onkeyup = this.handler;
-        document.film = this;
-    }
-    handler(event){ 
+class VehicleFilm extends Film {
+	constructor( display, resources ) {
+		super();
+		// this.settings = {
+		//     useCssLoader: false,
+		// };
+		// this.loaderBar = new LoaderIndicator(display);
+		this.ui = new UIController( this );
+		this.cores.graphic = new GraphicCore( display, resources, this.ui );
+		this.cores.physic = new PhysicCore();
+		document.onkeydown = this.handler;
+		document.onkeyup = this.handler;
+		document.film = this;
+	}
 
-        let keyUp = (event.type == 'keyup');
+	handler( event ) {
 
-        switch(event.code){
-        case 'KeyV':
-            (keyUp) ? document.film.ui.changeVisibleGUI() : null ;
-            break;
-            case 'KeyL':
-                (keyUp) ? document.film.cores.graphic.currentScene.vehicle.changeBodyHeadlightsVisible() : null;
-                break;
-        }
+		let keyUp = ( event.type === 'keyup' );
 
-        document.film.cores.graphic.currentScene.vehicle.handler(event);
+		switch( event.code ) {
+		case 'KeyV':
+			if ( keyUp ) {
+				document.film.ui.changeVisibleGUI();
+			}
 
-    }
+			break;
+		case 'KeyL':
+			if ( keyUp ) {
+				document.film.cores.graphic.currentScene.vehicle.changeBodyHeadlightsVisible();
+			}
+
+			break;
+		default:
+		}
+
+		document.film.cores.graphic.currentScene.vehicle.handler( event );
+
+	}
 }
 export { VehicleFilm };

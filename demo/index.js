@@ -1,13 +1,13 @@
-import * as $ from "../dist/bundle";
-import res from "./assets/assets.json";
+import * as $ from '../dist/bundle';
+import res from './assets/assets.json';
 
-const div = document.querySelector('.elemForCanv');
+const div = document.querySelector( '.elemForCanv' );
 
-const app = new $.App(div,res);
+const app = new $.App( div, res );
 
 app.action();
 
-//window.app = app;
+// window.app = app;
 
 
 // const app2 = new $.VehicleFilm(div,res);
@@ -15,12 +15,10 @@ app.action();
 // app2.run();
 
 
-
- // for test 2 films 
+// for test 2 films
 
 // const div = document.querySelector('.elemForCanvV1');
 // const div2 = document.querySelector('.elemForCanvV2');
-
 
 
 // const app = new $.App(div,res);
