@@ -3,7 +3,7 @@
         "type": "3dModel",
         "name": "vehicleModel",
         "path": "./assets/gltf/",
-        "url": "amg_e63.gltf"
+        "url": "amg_e63.glb"
     },
     {
         "type": "env",

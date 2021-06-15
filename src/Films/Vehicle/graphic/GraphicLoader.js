@@ -38,9 +38,14 @@ class GraphicLoader extends EventEmitter {
 			return new THREE.CubeTextureLoader();
 		case '3dModel':
 			switch ( this.getLoaderTypeFromUrl( asset.url ) ) {
+
 			case 'gltf':
+			case 'glb':
 				return new GLTFLoader();
-			default: console.warn( `Dismatch type 3d loader:${ asset.name } !` );
+
+			default:
+				console.warn( `Dismatch type 3d loader:${ asset.name } !` );
+				break;
 			}
 
 			break;
