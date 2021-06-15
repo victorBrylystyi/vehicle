@@ -5,9 +5,10 @@ const path = require("path");
 
 module.exports = {
   context: __dirname,
-  devtool: 'eval-source-map',
+  //devtool: 'eval-source-map',
   entry: ['./index'],
-  mode: 'development',
+  mode: 'production',
+  //mode: 'development',
   output: {
     path: path.resolve(__dirname, "out"),
     filename: "bundle.js",
