@@ -1,11 +1,12 @@
-var path = require('path');
-var express = require('express');
+/* eslint-disable no-process-env */
+let path = require( 'path' );
+let express = require( 'express' );
 
-var app = express();
+let app = express();
 
-app.use(express.static(path.join(__dirname, '/')));
-app.set('port', process.env.PORT || 8080);
+app.use( express.static( path.join( __dirname, '/' ) ) );
+app.set( 'port', process.env.PORT || 8080 );
 
-var server = app.listen(app.get('port'), function() {
-  console.log('listening on port ', server.address().port);
-});
+let server = app.listen( app.get( 'port' ), () => {
+	console.log( 'listening on port ', server.address().port );
+} );
