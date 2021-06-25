@@ -2,7 +2,7 @@ import { Core } from './Core';
 
 class Film extends Core {
 	constructor() {
-		super();
+		super( 'cf' );
 		this.cores = {
 			graphic: null,
 			physic: null
@@ -27,6 +27,8 @@ class Film extends Core {
 		if ( this.cores.graphic ) {
 			this.cores.graphic.preStart();
 		}
+
+		console.log( 'done prestart' );
 	}
 
 	update() {

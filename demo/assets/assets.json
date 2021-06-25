@@ -35,5 +35,24 @@
         "name": "ground_roughness",
         "path": "./assets/ground/Tiles/",
         "url": "SolarPanel002_1K_Roughness.jpg"
+    },
+    {
+        "type": "scene",
+        "name": "envBox",
+        "path": "./assets/sceneBox/sky3/",
+        "url": [              
+                "px.png",
+                "nx.png",
+                "py.png",
+                "ny.png",
+                "pz.png",
+                "nz.png"
+                ]
+    },
+    {
+        "type": "texture",
+        "name": "headlightsFlare",
+        "path": "./assets/head/",
+        "url": "flareHead.jpg"
     }
 ]

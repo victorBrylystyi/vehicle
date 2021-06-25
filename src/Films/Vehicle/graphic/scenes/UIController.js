@@ -19,7 +19,12 @@ class UIController {
 
 	guiSettings() {
 		this.gui.domElement.style.transform = 'scale(1)';
-		this.film.cores.graphic.domElement.appendChild( this.gui.domElement );
+		if ( this.film.cores.graphic.domElement ) {
+			this.film.cores.graphic.domElement.appendChild( this.gui.domElement );
+		} else {
+			document.body.appendChild( this.gui.domElement );
+		}
+
 		this.gui.domElement.style.position = 'absolute';
 		this.gui.domElement.style.right = '0';
 		this.gui.domElement.style.top = '0';
@@ -86,7 +91,8 @@ class UIController {
 
 		const params = {
 			fog: false,
-			background: currentScene.scene.background.getHex(),
+			shadow: false,
+			background: currentScene.defBackground.getHex(),
 			intensity: currentScene.sceneLight.intensity,
 			color: currentScene.sceneLight.color.getHex(),
 			height: currentScene.settings.sceneLightBias,
@@ -98,9 +104,15 @@ class UIController {
 			.onChange( ( v ) => {
 				if ( v ) {
 					currentScene.addFog();
+					currentScene.gui.changeSceneBackground( params.background );
 				} else {
 					currentScene.removeFog();
 				}
+			} );
+
+		scene.add( params, 'shadow' )
+			.onChange( ( v ) => {
+				this.film.cores.graphic.visuShadows( v );
 			} );
 
 		scene.addColor( params, 'background' )
@@ -313,14 +325,10 @@ class UIController {
 		const v = this.gui.domElement.style.visibility;
 		if ( v === 'visible' ) {
 			this.gui.domElement.style.visibility = 'hidden';
-			if( this.film.cores.graphic.guideMenu ) {
-				this.film.cores.graphic.chageStatusGuideMenu( 'hidden' );
-			}
+			this.film.cores.graphic.chageStatusGuideMenu( 'hidden' );
 		} else if ( v === 'hidden' ) {
 			this.gui.domElement.style.visibility = 'visible';
-			if( this.film.cores.graphic.guideMenu ) {
-				this.film.cores.graphic.chageStatusGuideMenu( 'visible' );
-			}
+			this.film.cores.graphic.chageStatusGuideMenu( 'visible' );
 		}
 	}
 }

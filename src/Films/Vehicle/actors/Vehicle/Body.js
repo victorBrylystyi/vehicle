@@ -23,6 +23,7 @@ class Body extends GObject {
 		this.graphic.physicMesh.visible = false;
 		this.graphic.physicMesh.name = 'vehicleBody';
 		this.add( this.graphic.physicMesh );
+		this.castShadow = true;
 	}
 
 	createBody() {
@@ -69,8 +70,41 @@ class Body extends GObject {
 		this.headLights.LF.visible = false;
 		this.headLights.RF.visible = false;
 
+		this.headLights.LF.add( this.headLightsFlare.LF );
+		this.headLights.RF.add( this.headLightsFlare.RF );
+
 		this.add( this.headLights.LF, this.headLights.LF.target,
 			this.headLights.RF, this.headLights.RF.target );
+	}
+
+	createHeadlitsFlare( mapFlare ) {
+		this.headLightsFlare = {
+			material: new THREE.PointsMaterial( {
+				color: 0xffffff,
+				size: 150,
+				blending: THREE.AdditiveBlending,
+				transparent: true,
+				map: mapFlare
+			} ),
+			geometryLF: new THREE.BufferGeometry(),
+			geometryRF: new THREE.BufferGeometry(),
+			LF: {},
+			RF: {}
+		};
+
+		this.headLightsFlare.geometryLF.setAttribute( 'position', new THREE.Float32BufferAttribute( [
+			0.3,
+			-0.5,
+			-0.1
+		], 3 ) );
+		this.headLightsFlare.LF = new THREE.Points( this.headLightsFlare.geometryLF, this.headLightsFlare.material );
+		this.headLightsFlare.geometryRF.setAttribute( 'position', new THREE.Float32BufferAttribute( [
+			0.3,
+			0.5,
+			-0.1
+		], 3 ) );
+		this.headLightsFlare.RF = new THREE.Points( this.headLightsFlare.geometryRF, this.headLightsFlare.material );
+
 	}
 
 	headlightHelp( angle ) {
@@ -90,6 +124,10 @@ class Body extends GObject {
 			this.headLights.LF.target.position.y = this.headLights.LF.position.y + helpLF;
 			this.headLights.RF.target.position.y = this.headLights.RF.position.y + helpRF;
 		}
+	}
+
+	addHeadlightsFlare( map ) {
+		this.createHeadlitsFlare( map );
 	}
 
 	setLightsPositions() {

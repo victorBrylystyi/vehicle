@@ -1,7 +1,7 @@
 import * as $ from '../dist/bundle';
 import res from './assets/assets.json';
 
-const div = document.querySelector( '.elemForCanv' );
+let div = document.querySelector( '.elemForCanv' );
 
 const app = new $.App( div, res );
 

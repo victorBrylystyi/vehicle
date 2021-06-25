@@ -27,9 +27,8 @@ class Wheel extends GObject {
 	}
 
 	updateBodyInfo() {
-		const t = this.raycastVehicleWheel.worldTransform;
-		this.physicBody.position.copy( t.position );
-		this.physicBody.quaternion.copy( t.quaternion );
+		this.physicBody.position.copy( this.raycastVehicleWheel.worldTransform.position );
+		this.physicBody.quaternion.copy( this.raycastVehicleWheel.worldTransform.quaternion );
 	}
 
 	createBody() {

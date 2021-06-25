@@ -4,11 +4,10 @@ import { Wheel } from './Wheel';
 import * as THREE from 'three';
 
 class Vehicle {
-	constructor( physicWorld, cntrls, timer ) {
+	constructor( physicWorld, timer ) {
 		this.physicWorld = physicWorld;
 		this.timer = timer;
-		this.controls = cntrls;
-		this.bodyMass = 1700;
+		this.bodyMass = 2000;
 		this.wheelMass = 30;
 		this.mainDim = {
 			body: {
@@ -238,9 +237,14 @@ class Vehicle {
 			if ( keyUp ) {
 				this.relaxBreake();
 				this.setEngineForce( 0 );
+				this.materials.lights.LR.emissive.r = 0.35;
+				this.materials.lights.RR.emissive.r = 0.35;
 			} else {
 				this.raycastVehicle.setBrake( this.settings.maxBrakeForce, 2 );
 				this.raycastVehicle.setBrake( this.settings.maxBrakeForce, 3 );
+
+				this.materials.lights.LR.emissive.r = 0.7;
+				this.materials.lights.RR.emissive.r = 0.7;
 			}
 
 			break;
@@ -335,21 +339,6 @@ class Vehicle {
 		this.raycastVehicle.setSteeringValue( ( this.settings.steering.stw ), 1 );
 	}
 
-	updateRearLights() {
-		if ( this.materials.lights.LR && this.materials.lights.RR ) {
-			if ( this.raycastVehicle.wheelInfos[ 0 ].brake > 0 ||
-          this.raycastVehicle.wheelInfos[ 1 ].brake > 0 ||
-          this.raycastVehicle.wheelInfos[ 2 ].brake > 0 ||
-          this.raycastVehicle.wheelInfos[ 3 ].brake > 0 ) {
-				this.materials.lights.LR.emissive.r = 0.7;
-				this.materials.lights.RR.emissive.r = 0.7;
-			} else {
-				this.materials.lights.LR.emissive.r = 0.35;
-				this.materials.lights.RR.emissive.r = 0.35;
-			}
-		}
-	}
-
 	turnLightControl( headlight, rear ) {
 		switch ( this.settings.turnLightsHelper.operation ) {
 		case 0:
@@ -418,6 +407,8 @@ class Vehicle {
 				} else if ( this.settings.steering.angle < 0 ) {
 					this.settings.turnLightsHelper.mainOperation = 2;
 				}
+			} else {
+				return undefined;
 			}
 
 			break;
@@ -499,14 +490,19 @@ class Vehicle {
 			this.updateRaycastVehicle();
 			this.steeringControll( this.settings.steering.angle );
 			this.updateSupports();
-			this.updateTurnLights();
-			this.updateLightHelper();
+			if ( this.timer ) {
+				this.updateTurnLights();
+			}
+
+			if ( this.body.headLights && this.body.headLights.LF.visible && this.body.headLights.RF.visible ) {
+				this.updateLightHelper();
+			}
+
 			for ( const wheel of Object.values( this.wheels ) ) {
 				wheel.updateBodyInfo();
 				wheel.update();
 			}
 
-			this.updateRearLights();
 		}
 	}
 
@@ -517,15 +513,18 @@ class Vehicle {
 	}
 
 	updateSupports() {
-		if ( this.supports.LF && this.supports.RF && this.supports.LR && this.supports.RR ) {
-			this.supports.LF.position.copy( this.raycastVehicle.wheelInfos[ 0 ].chassisConnectionPointLocal );
-			this.supports.RF.position.copy( this.raycastVehicle.wheelInfos[ 1 ].chassisConnectionPointLocal );
-			this.supports.LR.position.copy( this.raycastVehicle.wheelInfos[ 2 ].chassisConnectionPointLocal );
-			this.supports.RR.position.copy( this.raycastVehicle.wheelInfos[ 3 ].chassisConnectionPointLocal );
-
+		if ( this.supports.LF && this.supports.RF && this.supports.LR && this.supports.RR &&
+			( this.settings.steering.stw > 0.01 || this.settings.steering.stw < -0.01 ) ) {
 			this.supports.LF.rotation.y = -this.settings.steering.stw - Math.PI / 2;
 			this.supports.RF.rotation.y = -this.settings.steering.stw - Math.PI / 2;
 		}
+	}
+
+	updateSupportsConnectionPoint() {
+		this.supports.LF.position.copy( this.raycastVehicle.wheelInfos[ 0 ].chassisConnectionPointLocal );
+		this.supports.RF.position.copy( this.raycastVehicle.wheelInfos[ 1 ].chassisConnectionPointLocal );
+		this.supports.LR.position.copy( this.raycastVehicle.wheelInfos[ 2 ].chassisConnectionPointLocal );
+		this.supports.RR.position.copy( this.raycastVehicle.wheelInfos[ 3 ].chassisConnectionPointLocal );
 	}
 
 	changeHeadlightsTargetX( x ) {
@@ -563,6 +562,8 @@ class Vehicle {
 		this.raycastVehicle.wheelInfos[ 1 ].chassisConnectionPointLocal.z = this.connectionPointsWheels.RF.z - c;
 		this.raycastVehicle.wheelInfos[ 2 ].chassisConnectionPointLocal.z = this.connectionPointsWheels.LR.z - c;
 		this.raycastVehicle.wheelInfos[ 3 ].chassisConnectionPointLocal.z = this.connectionPointsWheels.RR.z - c;
+
+		this.updateSupportsConnectionPoint();
 	}
 
 	changeCompression( dC ) {

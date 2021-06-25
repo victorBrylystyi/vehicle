@@ -16,18 +16,32 @@ class LoaderIndicator {
 		this.holder.appendChild( element );
 	}
 
+	resize() {
+		if ( this.rootElem ) {
+			this.holder.style.width = `${ this.rootElem.clientWidth }px`;
+			this.holder.style.height = `${ this.rootElem.clientHeight }px`;
+		} else {
+			this.holder.style.width = `${ window.innerWidth }px`;
+			this.holder.style.height = `${ window.innerHeight }px`;
+		}
+	}
+
 	createHolder() {
 		this.holder = document.createElement( 'div' );
 		this.holder.className = 'holder';
 
-		this.holder.style.width = `${ this.rootElem.clientWidth }px`; /* 100% */
-		this.holder.style.height = `${ this.rootElem.clientHeight }px`; /* 100% */
+		this.resize();
+
 		this.holder.style.display = 'flex';
 		this.holder.style.justifyContent = 'center';
 		this.holder.style.alignItems = 'center';
 		this.holder.style.backgroundColor = '#797C7E';
 
-		this.rootElem.appendChild( this.holder );
+		if ( this.rootElem ) {
+			this.rootElem.appendChild( this.holder );
+		}else {
+			document.body.appendChild( this.holder );
+		}
 	}
 
 	createLoader() {

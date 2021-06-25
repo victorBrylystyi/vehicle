@@ -37,8 +37,10 @@ class GraphicLoader extends EventEmitter {
 		case 'texture':
 			return new THREE.TextureLoader();
 		case 'env':
+		case 'scene':
 			return new THREE.CubeTextureLoader();
 		case '3dModel':
+
 			switch ( this.getLoaderTypeFromUrl( asset.url ) ) {
 
 			case 'gltf':

@@ -19,6 +19,7 @@ class VehicleScene {
 			controlsMaxDist: 45,
 			controlsMaxAngle: 1.45
 		};
+		this.defBackground = new THREE.Color( 0xeeeeee );
 		this.init();
 
 		return this;
@@ -32,15 +33,14 @@ class VehicleScene {
 		this.controls.dampingFactor = 0.05;
 		this.controls.screenSpacePanning = false;
 
-		this.amb = new THREE.AmbientLight( 'white', 0.3 );
-		this.scene.add( this.amb );
+		this.scene.add( new THREE.AmbientLight( 'white', 0.3 ) );
 
 		this.controls.minDistance = 22;
 		this.controls.maxDistance = this.settings.controlsMaxDist;
 
 		this.controls.maxPolarAngle = this.settings.controlsMaxAngle;
 
-		this.scene.background = new THREE.Color( 0xeeeeee );
+		this.scene.background = this.defBackground;
 
 		const near = 20;
 		const far = 300;
@@ -48,9 +48,11 @@ class VehicleScene {
 
 		this.addSceneLight();
 
-		this.vehicle = new Vehicle( this.physicWorld, this.controls, this.timer );
+		this.vehicle = new Vehicle( this.physicWorld, this.timer );
 
-		this.ground = new Ground( this.physicWorld, {
+		this.field = new Map();
+
+		const ground = new Ground( this.physicWorld, {
 			sizeX: 100,
 			sizeY: 100,
 			heightPlane: 10,
@@ -58,7 +60,7 @@ class VehicleScene {
 			elementSize: 5
 		}, new THREE.Vector3( -250, 0, 250 ) );
 
-		this.ground2 = new Ground( this.physicWorld, {
+		const ground2 = new Ground( this.physicWorld, {
 			sizeX: 100,
 			sizeY: 100,
 			heightPlane: 10,
@@ -66,7 +68,7 @@ class VehicleScene {
 			elementSize: 5
 		}, new THREE.Vector3( -745, 0, 250 ) );
 
-		this.ground3 = new Ground( this.physicWorld, {
+		const ground3 = new Ground( this.physicWorld, {
 			sizeX: 100,
 			sizeY: 100,
 			heightPlane: 10,
@@ -74,7 +76,7 @@ class VehicleScene {
 			elementSize: 5
 		}, new THREE.Vector3( 245, 0, 250 ) );
 
-		this.ground4 = new Ground( this.physicWorld, {
+		const ground4 = new Ground( this.physicWorld, {
 			sizeX: 100,
 			sizeY: 100,
 			heightPlane: 10,
@@ -82,7 +84,7 @@ class VehicleScene {
 			elementSize: 5
 		}, new THREE.Vector3( 245, 0, 745 ) );
 
-		this.ground5 = new Ground( this.physicWorld, {
+		const ground5 = new Ground( this.physicWorld, {
 			sizeX: 100,
 			sizeY: 100,
 			heightPlane: 10,
@@ -90,7 +92,7 @@ class VehicleScene {
 			elementSize: 5
 		}, new THREE.Vector3( 245, 0, -245 ) );
 
-		this.ground6 = new Ground( this.physicWorld, {
+		const ground6 = new Ground( this.physicWorld, {
 			sizeX: 100,
 			sizeY: 100,
 			heightPlane: 10,
@@ -98,7 +100,7 @@ class VehicleScene {
 			elementSize: 5
 		}, new THREE.Vector3( -250, 0, -245 ) );
 
-		this.ground7 = new Ground( this.physicWorld, {
+		const ground7 = new Ground( this.physicWorld, {
 			sizeX: 100,
 			sizeY: 100,
 			heightPlane: 10,
@@ -106,7 +108,7 @@ class VehicleScene {
 			elementSize: 5
 		}, new THREE.Vector3( -250, 0, 745 ) );
 
-		this.ground8 = new Ground( this.physicWorld, {
+		const ground8 = new Ground( this.physicWorld, {
 			sizeX: 100,
 			sizeY: 100,
 			heightPlane: 10,
@@ -114,7 +116,7 @@ class VehicleScene {
 			elementSize: 5
 		}, new THREE.Vector3( -745, 0, 745 ) );
 
-		this.ground9 = new Ground( this.physicWorld, {
+		const ground9 = new Ground( this.physicWorld, {
 			sizeX: 100,
 			sizeY: 100,
 			heightPlane: 10,
@@ -122,186 +124,25 @@ class VehicleScene {
 			elementSize: 5
 		}, new THREE.Vector3( -745, 0, -245 ) );
 
-		this.prepare = {
-			vehicle: ( model ) => {
-				model.scene.traverse( ( child ) => {
-					if ( !child.isMesh ) {
-						return;
-					}
+		this.field.set( 'ground1', ground );
+		this.field.set( 'ground2', ground2 );
+		this.field.set( 'ground3', ground3 );
+		this.field.set( 'ground4', ground4 );
+		this.field.set( 'ground5', ground5 );
+		this.field.set( 'ground6', ground6 );
+		this.field.set( 'ground7', ground7 );
+		this.field.set( 'ground8', ground8 );
+		this.field.set( 'ground9', ground9 );
 
-					let prevMaterial = child.material;
-					child.material = new THREE.MeshPhysicalMaterial();
-					THREE.MeshStandardMaterial.prototype.copy.call( child.material, prevMaterial );
-				} );
-				const body = this.foundMeshByName( 'body', model.scene.children );
-				this.vehicle.materials.body = this.foundMaterialInGroupByName( 'testCarPaint', body );
-				this.vehicle.materials.body.emissive.setHex( 0xa29d9d );
-
-
-				const suppRF = this.foundMeshByName( 'frSup', model.scene.children );
-				const suppLF = this.foundMeshByName( 'lfSup', model.scene.children );
-				const suppRR = this.foundMeshByName( 'rrSup', model.scene.children );
-				const suppLR = this.foundMeshByName( 'rlSup', model.scene.children );
-
-				this.vehicle.materials.supports.RF = this.foundMaterialInGroupByName( 'Material.001', suppRF );
-				this.vehicle.materials.supports.LF = this.foundMaterialInGroupByName( 'Material.001', suppLF );
-				this.vehicle.materials.supports.RR = this.foundMaterialInGroupByName( 'Material.001', suppRR );
-				this.vehicle.materials.supports.LR = this.foundMaterialInGroupByName( 'Material.001', suppLR );
-
-				this.vehicle.materials.supports.RF.envMapIntensity = 1.4;
-				this.vehicle.materials.supports.LF.envMapIntensity = 1.4;
-				this.vehicle.materials.supports.RR.envMapIntensity = 1.4;
-				this.vehicle.materials.supports.LR.envMapIntensity = 1.4;
-
-				this.vehicle.supports.RF = suppRF;
-				this.vehicle.supports.LF = suppLF;
-				this.vehicle.supports.RR = suppRR;
-				this.vehicle.supports.LR = suppLR;
-
-				const lightLF = this.foundMeshByName( 'f_l_light', model.scene.children );
-				const lightRF = this.foundMeshByName( 'f_r_light', model.scene.children );
-				const lightRR = this.foundMeshByName( 'r_r_light', model.scene.children );
-				const lightLR = this.foundMeshByName( 'r_l_light', model.scene.children );
-
-				const matLightRF = this.foundMaterialInGroupByName( 'righTurnLight', lightRF );
-				const matLightLF = this.foundMaterialInGroupByName( 'leftTurnLight', lightLF );
-
-				matLightLF.emissive.setHex( 0x000000 );
-				matLightRF.emissive.setHex( 0x000000 );
-
-				this.vehicle.materials.lights.LF = matLightLF;
-				this.vehicle.materials.lights.RF = matLightRF;
-
-				const matLightRR = this.foundMaterialInGroupByName( 'REAR TAIL LIGHT.002', lightRR );
-				const matLightLR = this.foundMaterialInGroupByName( 'REAR TAIL LIGHT.002', lightLR );
-				const turnLeftRear = this.foundMaterialInGroupByName( 'leftReverseLight', lightLR );
-				const turnRightRear = this.foundMaterialInGroupByName( 'rightReverseLight', lightRR );
-
-				this.vehicle.materials.lights.rearTurns.L = turnLeftRear;
-				this.vehicle.materials.lights.rearTurns.R = turnRightRear;
-
-				matLightLR.emissive.r = 0.35;
-				matLightRR.emissive.r = 0.35;
-
-				this.vehicle.materials.lights.LR = matLightLR;
-				this.vehicle.materials.lights.RR = matLightRR;
-
-				this.vehicle.body.add(
-					body,
-					lightLF,
-					lightLR,
-					lightRR,
-					lightRF,
-					this.vehicle.supports.RF,
-					this.vehicle.supports.LF,
-					this.vehicle.supports.RR,
-					this.vehicle.supports.LR );
-
-
-				this.vehicle.body.createHeadlights();
-				this.vehicle.body.setLightsPositions();
-
-				this.vehicle.wheels.RR.add( this.foundMeshByName( 'r_r_wheel', model.scene.children ) );
-				this.vehicle.wheels.RF.add( this.foundMeshByName( 'f_r_wheel', model.scene.children ) );
-				this.vehicle.wheels.LR.add( this.foundMeshByName( 'r_l_wheel', model.scene.children ) );
-				this.vehicle.wheels.LF.add( this.foundMeshByName( 'f_l_wheel', model.scene.children ) );
-
-				const wheel_RR = this.foundMeshByName( 'r_r_wheel', this.vehicle.wheels.RR.children );
-				const wheel_RF = this.foundMeshByName( 'f_r_wheel', this.vehicle.wheels.RF.children );
-				const wheel_LR = this.foundMeshByName( 'r_l_wheel', this.vehicle.wheels.LR.children );
-				const wheel_LF = this.foundMeshByName( 'f_l_wheel', this.vehicle.wheels.LF.children );
-
-				const carbonDiskLF = this.foundMaterialInGroupByName( 'carbon disk brake', wheel_LF );
-				const carbonDiskRF = this.foundMaterialInGroupByName( 'carbon disk brake', wheel_RF );
-				const carbonDiskLR = this.foundMaterialInGroupByName( 'carbon disk brake', wheel_LR );
-				const carbonDiskRR = this.foundMaterialInGroupByName( 'carbon disk brake', wheel_RR );
-
-				carbonDiskLF.envMapIntensity = 0.5;
-				carbonDiskRF.envMapIntensity = 0.5;
-				carbonDiskLR.envMapIntensity = 0.5;
-				carbonDiskRR.envMapIntensity = 0.5;
-
-				this.vehicle.materials.rim.LF = this.foundMaterialInGroupByName( 'frontDisk', wheel_LF );
-				this.vehicle.materials.rim.RF = this.foundMaterialInGroupByName( 'frontDisk', wheel_RF );
-				this.vehicle.materials.rim.LR = this.foundMaterialInGroupByName( 'frontDisk', wheel_LR );
-				this.vehicle.materials.rim.RR = this.foundMaterialInGroupByName( 'frontDisk', wheel_RR );
-
-				this.vehicle.materials.rim.LF.emissive.setHex( 0x8c8c8c );
-				this.vehicle.materials.rim.RF.emissive.setHex( 0x8c8c8c );
-				this.vehicle.materials.rim.LR.emissive.setHex( 0x8c8c8c );
-				this.vehicle.materials.rim.RR.emissive.setHex( 0x8c8c8c );
-
-
-				this.vehicle.body.name = 'body';
-				this.vehicle.wheels.LF.name = 'LF';
-				this.vehicle.wheels.RF.name = 'RF';
-				this.vehicle.wheels.RR.name = 'RR';
-				this.vehicle.wheels.LR.name = 'LR';
-
-				console.log( this.vehicle );
-			},
-			ground_color: ( map ) => {
-				this.ground.addMapToMatarial( map );
-				this.ground2.addMapToMatarial( map );
-				this.ground3.addMapToMatarial( map );
-				this.ground4.addMapToMatarial( map );
-				this.ground5.addMapToMatarial( map );
-				this.ground6.addMapToMatarial( map );
-				this.ground7.addMapToMatarial( map );
-				this.ground8.addMapToMatarial( map );
-				this.ground9.addMapToMatarial( map );
-			},
-			ground_ao: ( map ) => {
-				this.ground.addAOMapToMatarial( map );
-				this.ground2.addAOMapToMatarial( map );
-				this.ground3.addAOMapToMatarial( map );
-				this.ground4.addAOMapToMatarial( map );
-				this.ground5.addAOMapToMatarial( map );
-				this.ground6.addAOMapToMatarial( map );
-				this.ground7.addAOMapToMatarial( map );
-				this.ground8.addAOMapToMatarial( map );
-				this.ground9.addAOMapToMatarial( map );
-			},
-			ground_normal: ( map ) => {
-				this.ground.addNormalMapToMatarial( map );
-				this.ground2.addNormalMapToMatarial( map );
-				this.ground3.addNormalMapToMatarial( map );
-				this.ground4.addNormalMapToMatarial( map );
-				this.ground5.addNormalMapToMatarial( map );
-				this.ground6.addNormalMapToMatarial( map );
-				this.ground7.addNormalMapToMatarial( map );
-				this.ground8.addNormalMapToMatarial( map );
-				this.ground9.addNormalMapToMatarial( map );
-			},
-			ground_roughness: ( map ) => {
-				this.ground.addRoughnessMapToMatarial( map );
-				this.ground2.addRoughnessMapToMatarial( map );
-				this.ground3.addRoughnessMapToMatarial( map );
-				this.ground4.addRoughnessMapToMatarial( map );
-				this.ground5.addRoughnessMapToMatarial( map );
-				this.ground6.addRoughnessMapToMatarial( map );
-				this.ground7.addRoughnessMapToMatarial( map );
-				this.ground8.addRoughnessMapToMatarial( map );
-				this.ground9.addRoughnessMapToMatarial( map );
-			},
-			ground_displ: ( map ) => {
-				this.ground.addDisplMapToMatarial( map );
-				this.ground2.addDisplMapToMatarial( map );
-				this.ground3.addDisplMapToMatarial( map );
-				this.ground4.addDisplMapToMatarial( map );
-				this.ground5.addDisplMapToMatarial( map );
-				this.ground6.addDisplMapToMatarial( map );
-				this.ground7.addDisplMapToMatarial( map );
-				this.ground8.addDisplMapToMatarial( map );
-				this.ground9.addDisplMapToMatarial( map );
-			}
-		};
 		this.gui = {
 			changeSceneBackground: ( colorHex ) => {
-				this.scene.background.setHex( colorHex );
-				if ( this.scene.fog ) {
-					this.scene.fog.color.setHex( colorHex );
+				if ( this.scene.background.isColor ) {
+					this.scene.background.setHex( colorHex );
+					if ( this.scene.fog ) {
+						this.scene.fog.color.setHex( colorHex );
+					}
 				}
+
 			},
 			changeSceneLightIntensity: ( v ) => {
 				this.sceneLight.intensity = v;
@@ -400,15 +241,10 @@ class VehicleScene {
 
 		};
 
-		this.scene.add( this.ground );
-		this.scene.add( this.ground2 );
-		this.scene.add( this.ground3 );
-		this.scene.add( this.ground4 );
-		this.scene.add( this.ground5 );
-		this.scene.add( this.ground6 );
-		this.scene.add( this.ground7 );
-		this.scene.add( this.ground8 );
-		this.scene.add( this.ground9 );
+		this.field.forEach( ( ground ) => {
+			// ground.receiveShadow = true;
+			this.scene.add( ground );
+		} );
 
 		this.scene.add( this.vehicle.body );
 		this.scene.add( this.vehicle.wheels.LF );
@@ -418,32 +254,230 @@ class VehicleScene {
 	}
 
 	addAssets( data ) {
+		const foundMeshByName = ( name = '', source ) => {
+			for ( let i = 0; i < source.length; i++ ) {
+				if ( source[ i ].name === name ) {
+					return source[ i ];
+				}
+			}
+		};
+
+		const foundMaterialInGroupByName = ( name = '', grp ) => {
+			let material = null;
+			for ( let i = 0; i < grp.children.length; i++ ) {
+				if ( grp.children[ i ].isMesh ) {
+					if ( grp.children[ i ].material.name === name ) {
+						return grp.children[ i ].material;
+					}
+				}
+			}
+
+
+			return material;
+		};
+
 		switch ( data.name ) {
-		case 'box':
-			this.prepare.box( data.map );
-			break;
 		case 'vehicleModel':
-			this.prepare.vehicle( data.map );
+			data.map.scene.traverse( ( child ) => {
+				if ( !child.isMesh ) {
+					return;
+				}
+
+				// child.castShadow = true;
+
+				let prevMaterial = child.material;
+				child.material = new THREE.MeshPhysicalMaterial();
+				THREE.MeshStandardMaterial.prototype.copy.call( child.material, prevMaterial );
+			} );
+			const body = foundMeshByName( 'body', data.map.scene.children );
+			this.vehicle.materials.body = foundMaterialInGroupByName( 'testCarPaint', body );
+			this.vehicle.materials.body.emissive.setHex( 0xa29d9d );
+
+
+			const suppRF = foundMeshByName( 'frSup', data.map.scene.children );
+			const suppLF = foundMeshByName( 'lfSup', data.map.scene.children );
+			const suppRR = foundMeshByName( 'rrSup', data.map.scene.children );
+			const suppLR = foundMeshByName( 'rlSup', data.map.scene.children );
+
+			this.vehicle.materials.supports.RF = foundMaterialInGroupByName( 'Material.001', suppRF );
+			this.vehicle.materials.supports.LF = foundMaterialInGroupByName( 'Material.001', suppLF );
+			this.vehicle.materials.supports.RR = foundMaterialInGroupByName( 'Material.001', suppRR );
+			this.vehicle.materials.supports.LR = foundMaterialInGroupByName( 'Material.001', suppLR );
+
+			this.vehicle.materials.supports.RF.envMapIntensity = 1.4;
+			this.vehicle.materials.supports.LF.envMapIntensity = 1.4;
+			this.vehicle.materials.supports.RR.envMapIntensity = 1.4;
+			this.vehicle.materials.supports.LR.envMapIntensity = 1.4;
+
+			this.vehicle.supports.RF = suppRF;
+			this.vehicle.supports.LF = suppLF;
+			this.vehicle.supports.RR = suppRR;
+			this.vehicle.supports.LR = suppLR;
+
+			const lightLF = foundMeshByName( 'f_l_light', data.map.scene.children );
+			const lightRF = foundMeshByName( 'f_r_light', data.map.scene.children );
+			const lightRR = foundMeshByName( 'r_r_light', data.map.scene.children );
+			const lightLR = foundMeshByName( 'r_l_light', data.map.scene.children );
+
+			const matLightRF = foundMaterialInGroupByName( 'righTurnLight', lightRF );
+			const matLightLF = foundMaterialInGroupByName( 'leftTurnLight', lightLF );
+
+			matLightLF.emissive.setHex( 0x000000 );
+			matLightRF.emissive.setHex( 0x000000 );
+
+			this.vehicle.materials.lights.LF = matLightLF;
+			this.vehicle.materials.lights.RF = matLightRF;
+
+			const matLightRR = foundMaterialInGroupByName( 'REAR TAIL LIGHT.002', lightRR );
+			const matLightLR = foundMaterialInGroupByName( 'REAR TAIL LIGHT.002', lightLR );
+			const turnLeftRear = foundMaterialInGroupByName( 'leftReverseLight', lightLR );
+			const turnRightRear = foundMaterialInGroupByName( 'rightReverseLight', lightRR );
+
+			this.vehicle.materials.lights.rearTurns.L = turnLeftRear;
+			this.vehicle.materials.lights.rearTurns.R = turnRightRear;
+
+			matLightLR.emissive.r = 0.35;
+			matLightRR.emissive.r = 0.35;
+
+			this.vehicle.materials.lights.LR = matLightLR;
+			this.vehicle.materials.lights.RR = matLightRR;
+
+			this.vehicle.body.add(
+				body,
+				lightLF,
+				lightLR,
+				lightRR,
+				lightRF,
+				this.vehicle.supports.RF,
+				this.vehicle.supports.LF,
+				this.vehicle.supports.RR,
+				this.vehicle.supports.LR );
+
+
+			this.vehicle.body.createHeadlights();
+			this.vehicle.body.setLightsPositions();
+
+			this.vehicle.wheels.RR.add( foundMeshByName( 'r_r_wheel', data.map.scene.children ) );
+			this.vehicle.wheels.RF.add( foundMeshByName( 'f_r_wheel', data.map.scene.children ) );
+			this.vehicle.wheels.LR.add( foundMeshByName( 'r_l_wheel', data.map.scene.children ) );
+			this.vehicle.wheels.LF.add( foundMeshByName( 'f_l_wheel', data.map.scene.children ) );
+
+			const wheel_RR = foundMeshByName( 'r_r_wheel', this.vehicle.wheels.RR.children );
+			const wheel_RF = foundMeshByName( 'f_r_wheel', this.vehicle.wheels.RF.children );
+			const wheel_LR = foundMeshByName( 'r_l_wheel', this.vehicle.wheels.LR.children );
+			const wheel_LF = foundMeshByName( 'f_l_wheel', this.vehicle.wheels.LF.children );
+
+			const carbonDiskLF = foundMaterialInGroupByName( 'carbon disk brake', wheel_LF );
+			const carbonDiskRF = foundMaterialInGroupByName( 'carbon disk brake', wheel_RF );
+			const carbonDiskLR = foundMaterialInGroupByName( 'carbon disk brake', wheel_LR );
+			const carbonDiskRR = foundMaterialInGroupByName( 'carbon disk brake', wheel_RR );
+
+			carbonDiskLF.envMapIntensity = 0.5;
+			carbonDiskRF.envMapIntensity = 0.5;
+			carbonDiskLR.envMapIntensity = 0.5;
+			carbonDiskRR.envMapIntensity = 0.5;
+
+			this.vehicle.materials.rim.LF = foundMaterialInGroupByName( 'frontDisk', wheel_LF );
+			this.vehicle.materials.rim.RF = foundMaterialInGroupByName( 'frontDisk', wheel_RF );
+			this.vehicle.materials.rim.LR = foundMaterialInGroupByName( 'frontDisk', wheel_LR );
+			this.vehicle.materials.rim.RR = foundMaterialInGroupByName( 'frontDisk', wheel_RR );
+
+			this.vehicle.materials.rim.LF.emissive.setHex( 0x8c8c8c );
+			this.vehicle.materials.rim.RF.emissive.setHex( 0x8c8c8c );
+			this.vehicle.materials.rim.LR.emissive.setHex( 0x8c8c8c );
+			this.vehicle.materials.rim.RR.emissive.setHex( 0x8c8c8c );
+
+			const tireLF = foundMaterialInGroupByName( 'tire', wheel_LF );
+			const tireRF = foundMaterialInGroupByName( 'tire', wheel_RF );
+			const tireLR = foundMaterialInGroupByName( 'tire', wheel_LR );
+			const tireRR = foundMaterialInGroupByName( 'tire', wheel_RR );
+
+			const color = 0x181818;
+
+			tireLF.color.setHex( color );
+			tireRF.color.setHex( color );
+			tireLR.color.setHex( color );
+			tireRR.color.setHex( color );
+
+			tireLF.metalness = 1;
+			tireRF.metalness = 1;
+			tireLR.metalness = 1;
+			tireRR.metalness = 1;
+
+			tireLF.roughness = 0.65;
+			tireRF.roughness = 0.65;
+			tireLR.roughness = 0.65;
+			tireRR.roughness = 0.65;
+
+
+			this.vehicle.body.name = 'body';
+			this.vehicle.wheels.LF.name = 'LF';
+			this.vehicle.wheels.RF.name = 'RF';
+			this.vehicle.wheels.RR.name = 'RR';
+			this.vehicle.wheels.LR.name = 'LR';
+
+			console.log( this.vehicle );
 			break;
 		case 'ground_color':
-			this.prepare.ground_color( data.map );
+			this.field.forEach( ( ground ) => {
+				ground.addMapToMatarial( data.map );
+			} );
 			break;
 		case 'ground_ao':
-			this.prepare.ground_ao( data.map );
+			this.field.forEach( ( ground ) => {
+				ground.addAOMapToMatarial( data.map );
+			} );
 			break;
 		case 'ground_normal':
-			this.prepare.ground_normal( data.map );
+			this.field.forEach( ( ground ) => {
+				ground.addNormalMapToMatarial( data.map );
+			} );
 			break;
 		case 'ground_roughness':
-			this.prepare.ground_roughness( data.map );
+			this.field.forEach( ( ground ) => {
+				ground.addRoughnessMapToMatarial( data.map );
+			} );
 			break;
 		case 'ground_displ':
-			this.prepare.ground_displ( data.map );
+			this.field.forEach( ( ground ) => {
+				ground.addDisplMapToMatarial( data.map );
+			} );
+			break;
+		case 'envBox':
+			this.scene.background = data.map;
+			break;
+		case 'headlightsFlare':
+			this.vehicle.body.addHeadlightsFlare( data.map );
 			break;
 		default:
 			break;
-
 		}
+	}
+
+	updateLinks() {
+
+		const foundMeshByName = ( name = '', source ) => {
+			for ( let i = 0; i < source.length; i++ ) {
+				if ( source[ i ].name === name ) {
+					return source[ i ];
+				}
+			}
+		};
+
+		this.vehicle.body = null;
+		this.vehicle.body = foundMeshByName( 'body', this.scene.children );
+
+		this.vehicle.wheels.LF = null;
+		this.vehicle.wheels.LF = foundMeshByName( 'LF', this.scene.children );
+
+		this.vehicle.wheels.RF = null;
+		this.vehicle.wheels.RF = foundMeshByName( 'RF', this.scene.children );
+
+		this.vehicle.wheels.LR = null;
+		this.vehicle.wheels.LR = foundMeshByName( 'LR', this.scene.children );
+
+		this.vehicle.wheels.RR = null;
+		this.vehicle.wheels.RR = foundMeshByName( 'RR', this.scene.children );
 	}
 
 	loadAllAssets() {
@@ -464,14 +498,25 @@ class VehicleScene {
 			}
 		}
 
+		this.field = null;
+		this.updateLinks();
+		console.log( this );
 	}
 
 	addFog() {
+		if ( this.scene.background.isTexture ) {
+			this.scene.background = this.defBackground;
+		}
+
 		this.fog.color = this.scene.background;
 		this.scene.fog = this.fog;
 	}
 
 	removeFog() {
+		if ( this.scene.background.isColor ) {
+			this.scene.background = this.assetes.get( 'envBox' );
+		}
+
 		this.scene.fog = null;
 	}
 
@@ -483,27 +528,45 @@ class VehicleScene {
 		this.controls.maxPolarAngle = this.settings.controlsMaxAngle;
 	}
 
+	shadowUpdate( status ) {
+		if ( this.sceneLight ) {
+			this.sceneLight.castShadow = status;
+		}
+	}
+
 	addSceneLight() {
 		this.sceneLight = new THREE.PointLight( 'white' );
 		this.sceneLightHelper = new THREE.PointLightHelper( this.sceneLight );
+		// this.sceneLight.castShadow = false;
+		// this.sceneLight.shadow.camera.near = 1;
+		// this.sceneLight.shadow.camera.far = 1000;
+		// this.sceneLight.shadow.bias = -0.001;
 
+		// this.sceneLight.shadow.mapSize.width = 1024;
+		// this.sceneLight.shadow.mapSize.height = 1024;
 		this.scene.add( this.sceneLight );
-		// this.scene.add(this.sceneLightHelper);
+		this.scene.add( this.sceneLightHelper );
 	}
 
 	resizeAction() {
-		this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+		this.camera.aspect = this.canvas.width / this.canvas.height;
 		this.camera.updateProjectionMatrix();
 	}
 
 	updateScene() {
 		this.updateSceneLight();
+		this.updateControls();
+	}
+
+	updateControls() {
+		this.controls.target.copy( this.vehicle.body.position );
+		this.controls.update();
 	}
 
 	updateSceneLight() {
-		this.sceneLight.position.x = this.vehicle.body.position.x;
-		this.sceneLight.position.y = this.vehicle.body.position.y + 15 + this.settings.sceneLightBias;
-		this.sceneLight.position.z = this.vehicle.body.position.z;
+		this.sceneLight.position.x = this.vehicle.body.position.x + 30;
+		this.sceneLight.position.y = this.vehicle.body.position.y + 25 + this.settings.sceneLightBias;
+		this.sceneLight.position.z = this.vehicle.body.position.z + 30;
 	}
 
 	updateActors() {
@@ -513,32 +576,6 @@ class VehicleScene {
 	update() {
 		this.updateActors();
 		this.updateScene();
-		this.controls.target.set( this.vehicle.body.position.x,
-			this.vehicle.body.position.y,
-			this.vehicle.body.position.z );
-		this.controls.update();
-	}
-
-	foundMeshByName( name = '', source ) {
-		for ( let i = 0; i < source.length; i++ ) {
-			if ( source[ i ].name === name ) {
-				return source[ i ];
-			}
-		}
-	}
-
-	foundMaterialInGroupByName( name = '', grp ) {
-		let material = null;
-		for ( let i = 0; i < grp.children.length; i++ ) {
-			if ( grp.children[ i ].isMesh ) {
-				if ( grp.children[ i ].material.name === name ) {
-					return grp.children[ i ].material;
-				}
-			}
-		}
-
-
-		return material;
 	}
 }
 

@@ -37,20 +37,24 @@ class GraphicCore extends Core {
 
 	init() {
 		this.timer = new Timer();
+
+		this.prepareCanvas( this.domElement );
+
 		if ( this.useCssLoader ) {
 			this.cssLoaderBar = new LoaderIndicator( this.domElement );
-			this.prepareCanvas( this.domElement );
-			this.canvas.style.display = 'none';
-			this.cssLoaderBar.addElementToHolder( this.canvas );
-		} else {
-			this.prepareCanvas( this.domElement );
+		} else if ( this.domElement ) {
 			this.domElement.appendChild( this.canvas );
+		} else {
+			document.body.appendChild( this.canvas );
 		}
 
 		this.renderer = new THREE.WebGLRenderer( {
 			canvas: this.canvas,
 			antialias: true
+			// logarithmicDepthBuffer: true
 		} );
+		// this.renderer.shadowMap.enabled = false;
+		// this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 		this.threeClock = new THREE.Clock();
 
@@ -60,6 +64,11 @@ class GraphicCore extends Core {
 		this.currentScene = new VehicleScene( this.canvas, this.currentPhysicWorld, this.timer );
 
 		console.log( 'THREE done init' );
+	}
+
+	visuShadows( status ) {
+		this.renderer.shadowMap.enabled = status;
+		this.currentScene.shadowUpdate( status );
 	}
 
 	preStart() {
@@ -96,21 +105,19 @@ class GraphicCore extends Core {
 
 	resize() {
 		if ( this.domElement ) {
-			if ( this.useCssLoader ) {
-				this.cssLoaderBar.holder.style.width = `${ this.domElement.clientWidth }px`;
-				this.cssLoaderBar.holder.style.height = `${ this.domElement.clientHeight }px`;
+
+			if ( this.cssLoaderBar ) {
+				this.cssLoaderBar.resize();
 			}
 
-			this.canvas.width = this.domElement.clientWidth;
-			this.canvas.height = this.domElement.clientHeight;
+			this.renderer.setSize( this.domElement.clientWidth, this.domElement.clientHeight );
 
 		} else {
-			this.canvas.width = window.innerWidth;
-			this.canvas.height = window.innerHeight;
+
+			this.renderer.setSize( window.innerWidth, window.innerHeight );
 		}
 
 		this.currentScene.resizeAction();
-		this.renderer.setSize( this.canvas.width, this.canvas.height );
 	}
 
 	startLoadAssets() {
@@ -126,8 +133,22 @@ class GraphicCore extends Core {
 			} );
 
 			this.loader.on( 'load', ( result ) => {
+
 				if ( this.useCssLoader ) {
-					this.finishLoad();
+
+					this.useCssLoader = false;
+
+					if ( this.domElement ) {
+						this.domElement.removeChild( this.cssLoaderBar.holder );
+						this.domElement.appendChild( this.canvas );
+					} else {
+						document.body.removeChild( this.cssLoaderBar.holder );
+						document.body.appendChild( this.canvas );
+					}
+
+					this.cssLoaderBar = null;
+
+					this.resize();
 					this.createGuideMenu();
 				}
 
@@ -141,30 +162,22 @@ class GraphicCore extends Core {
 		}
 	}
 
-	finishLoad() {
-		this.cssLoaderBar.loaderElem.style.display = 'none';
-		this.canvas.style.display = 'block';
-		this.resize();
-	}
-
 	chageStatusGuideMenu( status = '' ) {
-		this.guideMenu.style.visibility = status;
+		document.querySelector( '.guide' ).style.visibility = status;
 	}
 
 	createGuideMenu() {
-		this.guideMenu = document.createElement( 'div' );
-		this.guideMenu.className = 'guide';
 
-		this.guideMenu.style.position = 'fixed';
-		this.guideMenu.style.zIndex = '999';
-		this.guideMenu.style.top = '0';
-		this.guideMenu.style.left = '0';
-		this.guideMenu.style.margin = '5px';
+		const guideMenu = document.createElement( 'div' );
+		guideMenu.className = 'guide';
 
-		this.cssLoaderBar.holder.appendChild( this.guideMenu );
+		guideMenu.style.position = 'fixed';
+		guideMenu.style.zIndex = '999';
+		guideMenu.style.top = '0';
+		guideMenu.style.left = '0';
+		guideMenu.style.margin = '5px';
 
-
-		this.text = {
+		const text = {
 			wasd: {
 				element: document.createElement( 'p' ),
 				textContent: 'W, A, S, D - Movement controls'
@@ -203,47 +216,40 @@ class GraphicCore extends Core {
 			}
 
 		};
-		this.text.wasd.element.textContent = this.text.wasd.textContent;
-		this.guideMenu.appendChild( this.text.wasd.element );
 
-		// this.text.w.element.textContent = this.text.w.textContent;
-		// this.guideMenu.appendChild(this.text.w.element);
+		text.wasd.element.textContent = text.wasd.textContent;
+		guideMenu.appendChild( text.wasd.element );
 
-		// this.text.a.element.textContent = this.text.a.textContent;
-		// this.guideMenu.appendChild(this.text.a.element);
+		text.r.element.textContent = text.r.textContent;
+		guideMenu.appendChild( text.r.element );
 
-		// this.text.s.element.textContent = this.text.s.textContent;
-		// this.guideMenu.appendChild(this.text.s.element);
+		text.l.element.textContent = text.l.textContent;
+		guideMenu.appendChild( text.l.element );
 
-		// this.text.d.element.textContent = this.text.d.textContent;
-		// this.guideMenu.appendChild(this.text.d.element);
+		text.v.element.textContent = text.v.textContent;
+		guideMenu.appendChild( text.v.element );
 
-		this.text.r.element.textContent = this.text.r.textContent;
-		this.guideMenu.appendChild( this.text.r.element );
+		text.space.element.textContent = text.space.textContent;
+		guideMenu.appendChild( text.space.element );
 
-		this.text.l.element.textContent = this.text.l.textContent;
-		this.guideMenu.appendChild( this.text.l.element );
-
-		this.text.v.element.textContent = this.text.v.textContent;
-		this.guideMenu.appendChild( this.text.v.element );
-
-		this.text.space.element.textContent = this.text.space.textContent;
-		this.guideMenu.appendChild( this.text.space.element );
+		if ( this.domElement ) {
+			this.domElement.appendChild( guideMenu );
+		} else {
+			document.body.appendChild( guideMenu );
+		}
 	}
 
 	prepareCanvas( inpElement ) {
 		this.canvas = document.createElement( 'canvas' );
 		this.canvas.id = 'canvas';
 
-		// if (!this.domElement){
-		//     this.canvas.width = window.innerWidth;
-		//     this.canvas.height = window.innerHeight;
-		//     document.body.appendChild(this.canvas);
-		//     return;
-		// }
-		this.canvas.width = inpElement.clientWidth;
-		this.canvas.height = inpElement.clientHeight;
-		// inpElement.appendChild(this.canvas);
+		if ( inpElement ) {
+			this.canvas.width = inpElement.clientWidth;
+			this.canvas.height = inpElement.clientHeight;
+		} else {
+			this.canvas.width = window.innerWidth;
+			this.canvas.height = window.innerHeight;
+		}
 	}
 }
 
