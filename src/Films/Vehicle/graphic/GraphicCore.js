@@ -6,6 +6,7 @@ import { Core } from '../../../cores/Core';
 import { VehicleScene } from './scenes/VehicleScene';
 import { LoaderIndicator } from './LoaderIndicator';
 import { Timer } from './Timer';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 class GraphicCore extends Core {
 	constructor( element = null, resources = null, ui = null ) {
@@ -15,6 +16,8 @@ class GraphicCore extends Core {
 		this.useCssLoader = true;
 		this.cssLoaderBar = null;
 		this.loader = new GraphicLoader( resources );
+		this.stats = new Stats();
+		document.body.appendChild( this.stats.dom );
 		this.currentScene = null;
 		this.appConfig = {
 			fps: 60,
@@ -101,6 +104,7 @@ class GraphicCore extends Core {
 		this.appConfig.fi += this.appConfig.speed * this.threeClock.getDelta() * this.appConfig.fps;
 		this.currentScene.update( this.appConfig.fi );
 		this.renderer.render( this.currentScene.scene, this.currentScene.camera );
+		this.stats.update();
 	}
 
 	resize() {
