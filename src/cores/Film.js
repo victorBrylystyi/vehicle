@@ -1,4 +1,5 @@
 import { Core } from './Core';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 class Film extends Core {
 	constructor() {
@@ -8,6 +9,7 @@ class Film extends Core {
 			physic: null
 		};
 		this.ui = null;
+		this.stats = new Stats();
 	}
 
 	init() {
@@ -32,12 +34,17 @@ class Film extends Core {
 	}
 
 	update() {
+
+		this.stats.begin();
+
 		if ( this.cores.physic ) {
 			this.cores.physic.update();
 		}
 		if ( this.cores.graphic ) {
 			this.cores.graphic.update();
 		}
+
+		this.stats.end();
 	}
 
 	postStart() {

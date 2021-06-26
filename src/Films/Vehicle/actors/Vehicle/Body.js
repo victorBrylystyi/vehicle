@@ -47,6 +47,10 @@ class Body extends GObject {
 			RF: new THREE.SpotLight()
 		};
 
+		// const lightBias = 5;
+		// this.headLights.LF.position.x = lightBias;
+		// this.headLights.RF.position.x = lightBias;
+
 		this.headLights.LF.name = 'lf';
 		this.headLights.LF.target.name = 'lf_t';
 
@@ -81,10 +85,11 @@ class Body extends GObject {
 		this.headLightsFlare = {
 			material: new THREE.PointsMaterial( {
 				color: 0xffffff,
-				size: 150,
+				size: 50,
 				blending: THREE.AdditiveBlending,
 				transparent: true,
-				map: mapFlare
+				map: mapFlare,
+				fog: false
 			} ),
 			geometryLF: new THREE.BufferGeometry(),
 			geometryRF: new THREE.BufferGeometry(),
@@ -104,7 +109,6 @@ class Body extends GObject {
 			-0.1
 		], 3 ) );
 		this.headLightsFlare.RF = new THREE.Points( this.headLightsFlare.geometryRF, this.headLightsFlare.material );
-
 	}
 
 	headlightHelp( angle ) {
@@ -155,9 +159,9 @@ class Body extends GObject {
 		rrLight.position.set( rear.x, -rear.y, rear.z );
 
 		this.foundMeshByName( 'lf', this.children )
-			.position.set( flLight.position.x + 0.35, flLight.position.y, flLight.position.z );
+			.position.set( flLight.position.x + 0.55, flLight.position.y, flLight.position.z );
 		this.foundMeshByName( 'rf', this.children )
-			.position.set( frLight.position.x + 0.35, frLight.position.y, frLight.position.z );
+			.position.set( frLight.position.x + 0.55, frLight.position.y, frLight.position.z );
 	}
 
 }

@@ -6,18 +6,16 @@ import { Core } from '../../../cores/Core';
 import { VehicleScene } from './scenes/VehicleScene';
 import { LoaderIndicator } from './LoaderIndicator';
 import { Timer } from './Timer';
-import Stats from 'three/examples/jsm/libs/stats.module.js';
+
 
 class GraphicCore extends Core {
-	constructor( element = null, resources = null, ui = null ) {
+	constructor( element = null, resources = null, ui = null, stats = null ) {
 		super();
 		this.name = 'three.js app';
 		this.domElement = element;
 		this.useCssLoader = true;
 		this.cssLoaderBar = null;
 		this.loader = new GraphicLoader( resources );
-		this.stats = new Stats();
-		document.body.appendChild( this.stats.dom );
 		this.currentScene = null;
 		this.appConfig = {
 			fps: 60,
@@ -30,6 +28,7 @@ class GraphicCore extends Core {
 		this.guideMenu = null;
 		this.currentPhysicWorld = null;
 		this.ui = ui;
+		this.stats = stats;
 
 		return this;
 	}
@@ -104,7 +103,6 @@ class GraphicCore extends Core {
 		this.appConfig.fi += this.appConfig.speed * this.threeClock.getDelta() * this.appConfig.fps;
 		this.currentScene.update( this.appConfig.fi );
 		this.renderer.render( this.currentScene.scene, this.currentScene.camera );
-		this.stats.update();
 	}
 
 	resize() {
@@ -235,6 +233,12 @@ class GraphicCore extends Core {
 
 		text.space.element.textContent = text.space.textContent;
 		guideMenu.appendChild( text.space.element );
+
+		console.log( this.stats );
+
+		this.stats.dom.style.position = 'relative';
+		this.stats.dom.style.float = 'left';
+		guideMenu.appendChild( this.stats.dom );
 
 		if ( this.domElement ) {
 			this.domElement.appendChild( guideMenu );

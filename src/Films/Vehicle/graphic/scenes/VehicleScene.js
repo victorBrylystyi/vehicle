@@ -280,14 +280,19 @@ class VehicleScene {
 		case 'vehicleModel':
 			data.map.scene.traverse( ( child ) => {
 				if ( !child.isMesh ) {
-					return;
+					return undefined;
 				}
+
+				// const mat = new THREE.MeshPhysicalMaterial( { color: 'white', metalness: 0.96, roughness: 0.1 } );
 
 				// child.castShadow = true;
 
-				let prevMaterial = child.material;
-				child.material = new THREE.MeshPhysicalMaterial();
-				THREE.MeshStandardMaterial.prototype.copy.call( child.material, prevMaterial );
+				// let prevMaterial = child.material;
+				// child.material = new THREE.MeshPhysicalMaterial();
+				// THREE.MeshStandardMaterial.prototype.copy.call( child.material, prevMaterial );
+				// const name = child.material.name;
+				// child.material = mat;
+				// child.material.name = name;
 			} );
 			const body = foundMeshByName( 'body', data.map.scene.children );
 			this.vehicle.materials.body = foundMaterialInGroupByName( 'testCarPaint', body );
@@ -545,7 +550,7 @@ class VehicleScene {
 		// this.sceneLight.shadow.mapSize.width = 1024;
 		// this.sceneLight.shadow.mapSize.height = 1024;
 		this.scene.add( this.sceneLight );
-		this.scene.add( this.sceneLightHelper );
+		// this.scene.add( this.sceneLightHelper );
 	}
 
 	resizeAction() {

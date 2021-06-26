@@ -1,5 +1,6 @@
 /* eslint-disable no-empty-function */
 
+
 class Core {
 	constructor( name = '' ) {
 		this.name = name;
@@ -20,10 +21,13 @@ class Core {
 	}
 
 	cycle() {
+
 		this.update();
+
 		this.processId = requestAnimationFrame( () => {
 			this.cycle();
 		} );
+
 	}
 
 	update() {}

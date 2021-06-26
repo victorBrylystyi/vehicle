@@ -237,8 +237,8 @@ class Vehicle {
 			if ( keyUp ) {
 				this.relaxBreake();
 				this.setEngineForce( 0 );
-				this.materials.lights.LR.emissive.r = 0.35;
-				this.materials.lights.RR.emissive.r = 0.35;
+				this.materials.lights.LR.emissive.r = 0.25;
+				this.materials.lights.RR.emissive.r = 0.25;
 			} else {
 				this.raycastVehicle.setBrake( this.settings.maxBrakeForce, 2 );
 				this.raycastVehicle.setBrake( this.settings.maxBrakeForce, 3 );

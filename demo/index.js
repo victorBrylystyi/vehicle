@@ -7,7 +7,7 @@ const app = new $.App( div, res );
 
 app.action();
 
-// window.app = app;
+window.app = app;
 
 
 // const app2 = new $.VehicleFilm(div,res);

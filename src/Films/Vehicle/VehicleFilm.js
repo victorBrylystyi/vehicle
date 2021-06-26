@@ -8,7 +8,7 @@ class VehicleFilm extends Film {
 	constructor( display, resources ) {
 		super( 'cf' );
 		this.ui = new UIController( this );
-		this.cores.graphic = new GraphicCore( display, resources, this.ui );
+		this.cores.graphic = new GraphicCore( display, resources, this.ui, this.stats );
 		this.cores.physic = new PhysicCore();
 		window.addEventListener( 'keydown', ( event ) => {
 			this.handler( event );
