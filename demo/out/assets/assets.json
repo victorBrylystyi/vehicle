@@ -22,20 +22,22 @@
         "type": "texture",
         "name": "ground_color",
         "path": "./assets/ground/Tiles/",
-        "url": "SolarPanel002_1K_Color.jpg"
+        "url": "paint-texture_21.jpg"
     },
+    
     {
         "type": "texture",
         "name": "ground_normal",
         "path": "./assets/ground/Tiles/",
-        "url": "SolarPanel002_1K_Normal.jpg"
+        "url": "paint-texture_18_n.jpg"
     },
     {
         "type": "texture",
         "name": "ground_roughness",
         "path": "./assets/ground/Tiles/",
-        "url": "SolarPanel002_1K_Roughness.jpg"
+        "url": "paint-texture_18_r.jpg"
     },
+
     {
         "type": "scene",
         "name": "envBox",

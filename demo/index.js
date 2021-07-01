@@ -7,6 +7,22 @@ const app = new $.App( div, res );
 
 app.action();
 
+/*
+
+  // {
+    //     "type": "texture",
+    //     "name": "ground_normal",
+    //     "path": "./assets/ground/Tiles/",
+    //     "url": "SolarPanel002_1K_Normal.jpg"
+    // },
+    // {
+    //     "type": "texture",
+    //     "name": "ground_roughness",
+    //     "path": "./assets/ground/Tiles/",
+    //     "url": "SolarPanel002_1K_Roughness.jpg"
+    // },
+*/
+
 // window.app = app;
 
 

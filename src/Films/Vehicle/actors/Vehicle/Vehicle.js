@@ -96,8 +96,8 @@ class Vehicle {
 			// LR: new CANNON.Vec3( 0, 0, 0 ),
 			// RR: new CANNON.Vec3( 0, 0, 0 )
 
-			LF: new CANNON.Vec3( 0.9066, 0.46, -0.22 ),
-			RF: new CANNON.Vec3( 0.9066, -0.46, -0.22 ),
+			LF: new CANNON.Vec3( 0.9066, 0.46, -0.205 ),
+			RF: new CANNON.Vec3( 0.9066, -0.46, -0.205 ),
 			LR: new CANNON.Vec3( -0.667, 0.4466, -0.22 ),
 			RR: new CANNON.Vec3( -0.667, -0.4466, -0.22 )
 		};
@@ -255,7 +255,7 @@ class Vehicle {
 					this.relaxBreake();
 				}
 
-				this.setEngineForce( this.settings.maxEngineForce / 1.618 );
+				this.setEngineForce( this.settings.maxEngineForce / 1.3 );
 			}
 
 
@@ -276,7 +276,7 @@ class Vehicle {
 			if ( !keyUp ) {
 				this.settings.speedControll.active = !this.settings.speedControll.active;
 				if ( this.settings.speedControll.active ) {
-					this.settings.speedControll.refSpeed = this.raycastVehicle.currentVehicleSpeedKmHour;
+					this.settings.speedControll.refSpeed = Math.round( this.raycastVehicle.currentVehicleSpeedKmHour );
 					this.guide.guideText.e.element.style.color = '#51ff6f';
 				} else {
 					this.settings.speedControll.refSpeed = 0;
@@ -323,6 +323,8 @@ class Vehicle {
 			this.settings.speedControll.refSpeed = 0;
 			this.settings.speedControll.force = 0;
 			this.guide.guideText.e.element.style.color = '';
+			this.relaxBreake();
+			this.setEngineForce( 0 );
 			break;
 		case 'Space':
 			if ( keyUp ) {
@@ -331,6 +333,7 @@ class Vehicle {
 			} else {
 				if ( this.settings.speedControll.active ) {
 					this.settings.speedControll.active = false;
+					this.guide.guideText.e.element.style.color = '';
 				}
 
 				this.raycastVehicle.setBrake( this.settings.maxBrakeForce, 2 );

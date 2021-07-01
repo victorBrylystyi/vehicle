@@ -1,10 +1,10 @@
-import { Core } from '../../../cores/Core';
+// import { Core } from '../../../cores/Core';
 import * as CANNON from 'cannon';
 import { VehicleWorld } from './worlds/VehicleWorld';
 
-class PhysicCore extends Core {
+class PhysicCore {
 	constructor() {
-		super();
+		// super();
 		this.worldFrequency = 60;
 		this.isPaused = false;
 		this.dT = 1 / this.worldFrequency;

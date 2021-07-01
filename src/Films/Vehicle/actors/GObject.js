@@ -41,6 +41,10 @@ class GObject extends THREE.Group {
 					this.children[ i ].children[ k ].material.map = map;
 					this.children[ i ].children[ k ].material.map.wrapS = THREE.RepeatWrapping;
 					this.children[ i ].children[ k ].material.map.wrapT = THREE.RepeatWrapping;
+					this.children[ i ].children[ k ].material.map.repeat.set( 5, 5 );
+					// this.children[ i ].children[ k ].material.map.image.width /= 2;
+					// this.children[ i ].children[ k ].material.map.image.height /= 2;
+					this.children[ i ].children[ k ].material.map.generateMipmaps = true;
 					this.children[ i ].children[ k ].material.needsUpdate = true;
 				}
 			}
@@ -73,6 +77,8 @@ class GObject extends THREE.Group {
 					this.children[ i ].children[ k ].material.normalMap = map;
 					this.children[ i ].children[ k ].material.normalMap.wrapS = THREE.RepeatWrapping;
 					this.children[ i ].children[ k ].material.normalMap.wrapT = THREE.RepeatWrapping;
+					this.children[ i ].children[ k ].material.map.repeat.set( 5, 5 );
+					this.children[ i ].children[ k ].material.map.generateMipmaps = true;
 					this.children[ i ].children[ k ].material.needsUpdate = true;
 				}
 			}
@@ -106,6 +112,8 @@ class GObject extends THREE.Group {
 					// this.children[i].children[k].material.roughness = 1.5;
 					this.children[ i ].children[ k ].material.roughnessMap.wrapS = THREE.RepeatWrapping;
 					this.children[ i ].children[ k ].material.roughnessMap.wrapT = THREE.RepeatWrapping;
+					this.children[ i ].children[ k ].material.map.repeat.set( 5, 5 );
+					this.children[ i ].children[ k ].material.map.generateMipmaps = true;
 					this.children[ i ].children[ k ].material.needsUpdate = true;
 				}
 			}

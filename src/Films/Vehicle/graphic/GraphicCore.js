@@ -2,15 +2,13 @@
 
 import * as THREE from 'three';
 import { GraphicLoader } from './GraphicLoader';
-import { Core } from '../../../cores/Core';
 import { VehicleScene } from './scenes/VehicleScene';
 import { LoaderIndicator } from './LoaderIndicator';
 import { Timer } from './Timer';
 
 
-class GraphicCore extends Core {
+class GraphicCore {
 	constructor( element = null, resources = null, ui = null, stats = null ) {
-		super();
 		this.name = 'three.js app';
 		this.domElement = element;
 		this.useCssLoader = true;
@@ -52,12 +50,16 @@ class GraphicCore extends Core {
 
 		this.renderer = new THREE.WebGLRenderer( {
 			canvas: this.canvas,
-			antialias: true,
-			autoClear: true
+			antialias: true
+			// powerPreference: 'high-performance'
+
 			// logarithmicDepthBuffer: true
 		} );
+		this.renderer.autoClear = true;
 
-		this.renderer.setPixelRatio( window.devicePixelRatio );
+		this.pixelRatio = window.devicePixelRatio;
+		this.renderer.setPixelRatio( this.pixelRatio );
+
 
 		// this.renderer.shadowMap.enabled = false;
 		// this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -68,6 +70,8 @@ class GraphicCore extends Core {
 			this.resize();
 		} );
 		this.currentScene = new VehicleScene( this.canvas, this.currentPhysicWorld, this.timer );
+
+		console.log( this.renderer.info );
 
 		console.log( 'THREE done init' );
 	}
@@ -112,9 +116,19 @@ class GraphicCore extends Core {
 		// this.appConfig.fi += this.appConfig.speed * this.threeClock.getDelta() * this.appConfig.fps;
 		this.currentScene.update( this.appConfig.fi );
 		// this.renderer.clear();
-		if ( ( dt * this.appConfig.fps ) < 1.2 ) {
+		if ( this.pixelRatio === 1 ) {
 			this.renderer.render( this.currentScene.scene, this.currentScene.camera );
+		} else if ( ( this.pixelRatio > 1 ) ) {
+			if ( ( dt * this.appConfig.fps ) < 1.2 ) {
+				this.renderer.render( this.currentScene.scene, this.currentScene.camera );
+			}
 		}
+		// if ( (( dt * this.appConfig.fps ) < 1.2) && this.pixelRatio>1 ) {
+		// 	this.renderer.render( this.currentScene.scene, this.currentScene.camera );
+		// } else if (this.pixelRatio === 1 ){
+
+		// }
+		// console.log( this.renderer.info.render.calls );
 		// this.renderer.render( this.currentScene.scene, this.currentScene.camera );
 
 		// sconsole.log( dt * this.appConfig.fps );
@@ -133,6 +147,10 @@ class GraphicCore extends Core {
 
 			this.renderer.setSize( window.innerWidth, window.innerHeight );
 		}
+
+		this.pixelRatio = window.devicePixelRatio;
+		this.renderer.setPixelRatio( this.pixelRatio );
+		console.log( this.renderer.getPixelRatio(), this.pixelRatio );
 
 		this.currentScene.resizeAction();
 	}

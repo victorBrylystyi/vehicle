@@ -5,13 +5,6 @@ import * as THREE from 'three';
 class Ground extends GObject {
 	constructor( phWorld, dim, initialPos ) {
 		super( phWorld );
-		// this.dim = {
-		//     sizeX: 100,
-		//     sizeY: 100,
-		//     heightPlane: 7,
-		//     amplitude: 0.1,
-		//     elementSize: 5,
-		// };
 		this.dim = dim;
 		this.initPos = initialPos;
 		this.physicMeshMatrtial = new THREE.MeshStandardMaterial( { side: THREE.DoubleSide } );

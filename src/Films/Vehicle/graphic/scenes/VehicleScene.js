@@ -35,8 +35,6 @@ class VehicleScene {
 		this.controls.dampingFactor = 0.05;
 		this.controls.screenSpacePanning = false;
 
-		this.scene.add( new THREE.AmbientLight( 'white', 0.3 ) );
-
 		this.controls.minDistance = 1.7;
 		this.controls.maxDistance = this.settings.controlsMaxDist;
 
@@ -48,11 +46,10 @@ class VehicleScene {
 		const far = 15;
 		this.fog = new THREE.Fog( this.scene.background, near, far );
 
-		this.addSceneLight();
-
 		this.vehicle = new Vehicle( this.physicWorld, this.timer );
 
 		this.field = new Map();
+		this.addSceneLight();
 
 		const ground = new Ground( this.physicWorld, {
 			sizeX: 20,
@@ -528,8 +525,18 @@ class VehicleScene {
 	}
 
 	addSceneLight() {
-		this.sceneLight = new THREE.PointLight( 'white' );
-		this.sceneLightHelper = new THREE.PointLightHelper( this.sceneLight );
+		// this.sceneLight = new THREE.PointLight( 'white' );
+		// this.sceneLightHelper = new THREE.PointLightHelper( this.sceneLight );
+
+		this.sceneLight = new THREE.DirectionalLight( 'white' );
+		// this.sceneLightHelper = new THREE.DirectionalLightHelper( this.sceneLight );
+		this.sceneLight.target.position.copy( this.camera.position );
+
+		this.sceneLight.position.x = 300;
+		this.sceneLight.position.y = 230;
+		this.sceneLight.position.z = 60;
+
+
 		// this.sceneLight.castShadow = false;
 		// this.sceneLight.shadow.camera.near = 1;
 		// this.sceneLight.shadow.camera.far = 1000;
@@ -537,8 +544,18 @@ class VehicleScene {
 
 		// this.sceneLight.shadow.mapSize.width = 1024;
 		// this.sceneLight.shadow.mapSize.height = 1024;
+
+		const skyColor = 0xB1E1FF;
+		const groundColor = 0xB97A20;
+
+		const light = new THREE.HemisphereLight( skyColor, groundColor, 0.5 );
+		// new THREE.AmbientLight( 'white', 0.3 );
+
+		this.scene.add( light );
 		this.scene.add( this.sceneLight );
+		this.scene.add( this.sceneLight.target );
 		// this.scene.add( this.sceneLightHelper );
+
 	}
 
 	resizeAction() {
@@ -557,9 +574,12 @@ class VehicleScene {
 	}
 
 	updateSceneLight() {
-		this.sceneLight.position.x = this.vehicle.body.position.x + 30;
-		this.sceneLight.position.y = this.vehicle.body.position.y + 25 + this.settings.sceneLightBias;
-		this.sceneLight.position.z = this.vehicle.body.position.z + 30;
+		// this.sceneLight.target.updateMatrixWorld();
+		// this.sceneLightHelper.update();
+		// this.sceneLight.position.y = 100 + this.settings.sceneLightBias;
+		// this.sceneLight.position.x = this.vehicle.body.position.x + 30;
+		// this.sceneLight.position.y = this.vehicle.body.position.y + 25 + this.settings.sceneLightBias;
+		// this.sceneLight.position.z = this.vehicle.body.position.z + 30;
 	}
 
 	updateActors() {

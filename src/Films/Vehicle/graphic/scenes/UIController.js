@@ -143,10 +143,10 @@ class UIController {
 				currentScene.gui.changeSceneLightColor( color );
 			} );
 
-		light.add( params, 'height', -3, 20, 0.1 )
-			.onChange( ( bias ) => {
-				currentScene.gui.changeSceneLightPosition( bias );
-			} );
+		// light.add( params, 'height', -3, 20, 0.1 )
+		// 	.onChange( ( bias ) => {
+		// 		currentScene.gui.changeSceneLightPosition( bias );
+		// 	} );
 	}
 
 	guiAddVehicleFolder( currentScene ) {
