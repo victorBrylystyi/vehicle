@@ -48,20 +48,16 @@ class Ground extends GObject {
 
 		let shape = {};
 		let matrix = [];
-		let defHeight = 10;
+		let defHeight = 0;
 		let heightPlane = dim.heightPlane;
-
-		if ( heightPlane === 0 ) {
-			console.warn( 'False value of height plane! Must be not equal 0 !' );
-			heightPlane = 0.1;
-		}
 
 		for ( let i = 0; i < dim.sizeX; i++ ) {
 			matrix.push( [] );
 			for ( let j = 0; j < dim.sizeY; j++ ) {
 				let height = Math.sin( i / dim.sizeX * Math.PI * 8 ) *
-                             Math.sin( j / dim.sizeY * Math.PI * 8 ) *
-                             dim.amplitude + heightPlane;
+				Math.sin( j / dim.sizeY * Math.PI * 8 ) *
+				dim.amplitude + heightPlane;
+
 				if( i === 0 || i === dim.sizeX - 1 || j === 0 || j === dim.sizeY - 1 ) {
 					height = defHeight;
 				}

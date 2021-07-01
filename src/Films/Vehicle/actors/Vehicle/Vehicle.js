@@ -6,7 +6,9 @@ import * as THREE from 'three';
 class Vehicle {
 	constructor( physicWorld, timer ) {
 		this.physicWorld = physicWorld;
+		this.guide = null;
 		this.timer = timer;
+		this.initPosition = new CANNON.Vec3( 80.66, 0.84348, -10.2846 );
 		this.bodyMass = 2000;
 		this.wheelMass = 30;
 		this.mainDim = {
@@ -20,7 +22,7 @@ class Vehicle {
 				y: 0.157,
 				z: 0.366
 			},
-			scaleOriginal: 15
+			scaleOriginal: 1
 		};
 		this.materials = {
 			body: null,
@@ -49,11 +51,18 @@ class Vehicle {
 
 		};
 		this.settings = {
-			maxEngineForce: 5000,
-			maxBrakeForce: 500,
+			maxEngineForce: 500,
+			maxBrakeForce: 50,
+			speedControll: {
+				active: false,
+				refSpeed: 0,
+				force: 0
+			},
+
 			steering: {
 				angle: 0,
-				stw: 0
+				stw: 0,
+				fix: false
 			},
 			typeDrive: {
 				front: false,
@@ -72,10 +81,25 @@ class Vehicle {
 			}
 		};
 		this.connectionPointsWheels = {
-			LF: new CANNON.Vec3( 13.6, 6.9, -3.3 ),
-			RF: new CANNON.Vec3( 13.6, -6.9, -3.3 ),
-			LR: new CANNON.Vec3( -10, 6.7, -3.3 ),
-			RR: new CANNON.Vec3( -10, -6.7, -3.3 )
+			// LF: new CANNON.Vec3( 13.6, 6.9, -3.3 ),
+			// RF: new CANNON.Vec3( 13.6, -6.9, -3.3 ),
+			// LR: new CANNON.Vec3( -10, 6.7, -3.3 ),
+			// RR: new CANNON.Vec3( -10, -6.7, -3.3 )
+
+			// LF: new CANNON.Vec3( 13.6 / 15, 6.9 / 15, -3.3 / 15 ),
+			// RF: new CANNON.Vec3( 13.6 / 15, -6.9 / 15, -3.3 / 15 ),
+			// LR: new CANNON.Vec3( -10 / 15, 6.7 / 15, -3.3 / 15 ),
+			// RR: new CANNON.Vec3( -10 / 15, -6.7 / 15, -3.3 / 15 )
+
+			// LF: new CANNON.Vec3( 0, 0, 0 ),
+			// RF: new CANNON.Vec3( 0, 0, 0 ),
+			// LR: new CANNON.Vec3( 0, 0, 0 ),
+			// RR: new CANNON.Vec3( 0, 0, 0 )
+
+			LF: new CANNON.Vec3( 0.9066, 0.46, -0.22 ),
+			RF: new CANNON.Vec3( 0.9066, -0.46, -0.22 ),
+			LR: new CANNON.Vec3( -0.667, 0.4466, -0.22 ),
+			RR: new CANNON.Vec3( -0.667, -0.4466, -0.22 )
 		};
 		this.supports = {
 			RF: null,
@@ -90,7 +114,7 @@ class Vehicle {
 
 	init() {
 		this.dim = this.calculateRealDim();
-		this.body = new Body( this.physicWorld, this.dim.body, this.bodyMass );
+		this.body = new Body( this.physicWorld, this.dim.body, this.bodyMass, this.initPosition );
 		this.wheels = {
 			LF: new Wheel( this.physicWorld, this.dim.wheel, this.wheelMass, 'LF' ),
 			RF: new Wheel( this.physicWorld, this.dim.wheel, this.wheelMass, 'RF' ),
@@ -101,16 +125,16 @@ class Vehicle {
 			radius: this.dim.wheel.x / 2,
 			directionLocal: new CANNON.Vec3( 0, 0, -1 ),
 			suspensionStiffness: 30,
-			suspensionRestLength: 0.3,
+			suspensionRestLength: 0.1,
 			frictionSlip: 7,
-			sliding: false,
-			dampingRelaxation: 1.5,
-			dampingCompression: 1.5,
+			sliding: true,
+			dampingRelaxation: 5,
+			dampingCompression: 5,
 			maxSuspensionForce: 100000,
-			rollInfluence: 0.06,
+			rollInfluence: 0.01,
 			axleLocal: new CANNON.Vec3( 0, 1, 0 ),
 			chassisConnectionPointLocal: new CANNON.Vec3( 1, 1, 0 ),
-			maxSuspensionTravel: 0.3,
+			maxSuspensionTravel: 0.12,
 			customSlidingRotationalSpeed: -10,
 			useCustomSlidingRotationalSpeed: true
 		};
@@ -190,30 +214,86 @@ class Vehicle {
 
 	handler( event ) {
 		const keyUp = ( event.type === 'keyup' );
+		// console.log( this.raycastVehicle.currentVehicleSpeedKmHour );
 		switch( event.code ) {
+		case 'KeyB':
+			if ( !keyUp ) {
+				if ( this.raycastVehicle.wheelInfos[ 2 ].brake === 0 ) {
+
+					this.raycastVehicle.setBrake( this.settings.maxBrakeForce, 2 );
+					this.raycastVehicle.setBrake( this.settings.maxBrakeForce, 3 );
+
+					if ( this.materials.lights.LR && this.materials.lights.LR.emissive.r !== 0.7 ) {
+						this.materials.lights.LR.emissive.r = 0.7;
+						this.materials.lights.RR.emissive.r = 0.7;
+					}
+
+				} else if ( this.raycastVehicle.wheelInfos[ 2 ].brake !== 0 ) {
+					this.relaxBreake();
+				}
+			}
+
+			break;
 		case 'KeyW':
-			this.setEngineForce( keyUp ? 0 : -this.settings.maxEngineForce );
+			if ( this.settings.speedControll.active ) {
+				this.settings.speedControll.refSpeed += 1;
+			} else {
+				this.setEngineForce( keyUp ? 0 : -this.settings.maxEngineForce );
+			}
+
 			break;
 		case 'KeyS':
-			if ( keyUp ) {
+			if ( this.settings.speedControll.active ) {
+				this.settings.speedControll.refSpeed -= 1;
+			} else if ( keyUp ) {
 				this.relaxBreake();
 				this.setEngineForce( 0 );
-
-			} else if ( this.raycastVehicle.currentVehicleSpeedKmHour > 0 ) {
+			} else if ( !keyUp && this.raycastVehicle.currentVehicleSpeedKmHour > 1 ) {
 				this.setBreakeForce( this.settings.maxBrakeForce );
-			} else {
+			} else if ( !keyUp && this.raycastVehicle.currentVehicleSpeedKmHour < 1 ) {
 				if ( this.raycastVehicle.wheelInfos[ 0 ].brake > 0 ) {
 					this.relaxBreake();
 				}
 
-				this.setEngineForce( this.settings.maxEngineForce );
+				this.setEngineForce( this.settings.maxEngineForce / 1.618 );
+			}
+
+
+			break;
+		case 'KeyF':
+			if ( !keyUp ) {
+				this.settings.steering.fix = !this.settings.steering.fix;
+
+				if ( this.settings.steering.fix ) {
+					this.guide.guideText.f.element.style.color = '#51ff6f';
+				} else {
+					this.guide.guideText.f.element.style.color = '';
+				}
+			}
+
+			break;
+		case 'KeyE':
+			if ( !keyUp ) {
+				this.settings.speedControll.active = !this.settings.speedControll.active;
+				if ( this.settings.speedControll.active ) {
+					this.settings.speedControll.refSpeed = this.raycastVehicle.currentVehicleSpeedKmHour;
+					this.guide.guideText.e.element.style.color = '#51ff6f';
+				} else {
+					this.settings.speedControll.refSpeed = 0;
+					this.settings.speedControll.force = 0;
+					this.guide.guideText.e.element.style.color = '';
+				}
 			}
 
 			break;
 		case 'KeyA':
 			if ( keyUp ) {
 				this.settings.steering.angle = 0;
-			} else if ( this.settings.steering.angle < 0.55 ) {
+			} else if ( !keyUp && this.settings.steering.angle < 0.55 ) {
+				if ( this.settings.steering.fix ) {
+					this.settings.steering.fix = false;
+				}
+
 				this.setSteeringAngle( 0.1 );
 			} else {
 				this.setSteeringAngle();
@@ -223,7 +303,11 @@ class Vehicle {
 		case 'KeyD':
 			if ( keyUp ) {
 				this.settings.steering.angle = 0;
-			} else if ( this.settings.steering.angle > -0.55 ) {
+			} else if ( !keyUp && this.settings.steering.angle > -0.55 ) {
+				if ( this.settings.steering.fix ) {
+					this.settings.steering.fix = false;
+				}
+
 				this.setSteeringAngle( -0.1 );
 			} else {
 				this.setSteeringAngle();
@@ -232,19 +316,30 @@ class Vehicle {
 			break;
 		case 'KeyR':
 			this.resetVehicle();
+			this.settings.steering.fix = false;
+			this.guide.guideText.f.element.style.color = '';
+
+			this.settings.speedControll.active = false;
+			this.settings.speedControll.refSpeed = 0;
+			this.settings.speedControll.force = 0;
+			this.guide.guideText.e.element.style.color = '';
 			break;
 		case 'Space':
 			if ( keyUp ) {
 				this.relaxBreake();
 				this.setEngineForce( 0 );
-				this.materials.lights.LR.emissive.r = 0.25;
-				this.materials.lights.RR.emissive.r = 0.25;
 			} else {
+				if ( this.settings.speedControll.active ) {
+					this.settings.speedControll.active = false;
+				}
+
 				this.raycastVehicle.setBrake( this.settings.maxBrakeForce, 2 );
 				this.raycastVehicle.setBrake( this.settings.maxBrakeForce, 3 );
 
-				this.materials.lights.LR.emissive.r = 0.7;
-				this.materials.lights.RR.emissive.r = 0.7;
+				if ( this.materials.lights.LR && this.materials.lights.LR.emissive.r !== 0.7 ) {
+					this.materials.lights.LR.emissive.r = 0.7;
+					this.materials.lights.RR.emissive.r = 0.7;
+				}
 			}
 
 			break;
@@ -261,6 +356,11 @@ class Vehicle {
 		this.raycastVehicle.setBrake( 0, 1 );
 		this.raycastVehicle.setBrake( 0, 2 );
 		this.raycastVehicle.setBrake( 0, 3 );
+
+		if ( this.materials.lights.LR && this.materials.lights.LR.emissive.r !== 0.25 ) {
+			this.materials.lights.LR.emissive.r = 0.25;
+			this.materials.lights.RR.emissive.r = 0.25;
+		}
 	}
 
 	updateLightHelper() {
@@ -279,6 +379,10 @@ class Vehicle {
 			this.raycastVehicle.setBrake( breakForce / 2, 2 );
 			this.raycastVehicle.setBrake( breakForce / 2, 3 );
 		}
+		if ( this.materials.lights.LR && this.materials.lights.LR.emissive.r !== 0.7 ) {
+			this.materials.lights.LR.emissive.r = 0.7;
+			this.materials.lights.RR.emissive.r = 0.7;
+		}
 
 	}
 
@@ -287,10 +391,10 @@ class Vehicle {
 		const boost = 1.7;
 
 		if ( this.settings.typeDrive.full ) {
-			this.raycastVehicle.applyEngineForce( force, 0 );
-			this.raycastVehicle.applyEngineForce( force, 1 );
-			this.raycastVehicle.applyEngineForce( force, 2 );
-			this.raycastVehicle.applyEngineForce( force, 3 );
+			this.raycastVehicle.applyEngineForce( ( this.raycastVehicle.wheelInfos[ 0 ].brake > 0 ) ? 0 : force, 0 );
+			this.raycastVehicle.applyEngineForce( ( this.raycastVehicle.wheelInfos[ 1 ].brake > 0 ) ? 0 : force, 1 );
+			this.raycastVehicle.applyEngineForce( ( this.raycastVehicle.wheelInfos[ 2 ].brake > 0 ) ? 0 : force, 2 );
+			this.raycastVehicle.applyEngineForce( ( this.raycastVehicle.wheelInfos[ 3 ].brake > 0 ) ? 0 : force, 3 );
 		} else if( this.settings.typeDrive.front ) {
 			this.raycastVehicle.applyEngineForce( force * boost, 0 );
 			this.raycastVehicle.applyEngineForce( force * boost, 1 );
@@ -303,7 +407,7 @@ class Vehicle {
 
 	resetVehicle() {
 		// Position
-		this.raycastVehicle.chassisBody.position.set( 11, 15, 4 );
+		this.raycastVehicle.chassisBody.position.copy( this.initPosition );
 		this.raycastVehicle.chassisBody.previousPosition.setZero();
 		this.raycastVehicle.chassisBody.interpolatedPosition.setZero();
 		this.raycastVehicle.chassisBody.initPosition.setZero();
@@ -330,13 +434,24 @@ class Vehicle {
 	}
 
 	steeringControll( angle ) {
-		let delta = 0;
-		delta = angle - this.settings.steering.stw;
 
-		this.settings.steering.stw += delta / 7;
+		if ( !this.settings.steering.fix ) {
+			this.settings.steering.stw += ( angle - this.settings.steering.stw ) / 7;
+		}
 
 		this.raycastVehicle.setSteeringValue( ( this.settings.steering.stw ), 0 );
 		this.raycastVehicle.setSteeringValue( ( this.settings.steering.stw ), 1 );
+
+
+	}
+
+	speedControll() {
+		if ( this.settings.speedControll.active ) {
+			// eslint-disable-next-line max-len
+			this.settings.speedControll.force = 200 * ( this.settings.speedControll.refSpeed - this.raycastVehicle.currentVehicleSpeedKmHour );
+			this.setEngineForce( -this.settings.speedControll.force );
+		}
+
 	}
 
 	turnLightControl( headlight, rear ) {
@@ -394,7 +509,8 @@ class Vehicle {
 
 		switch ( this.settings.turnLightsHelper.mainOperation ) {
 		case 0:
-			if ( this.settings.steering.angle !== 0 && this.materials.lights.LF ) {
+			if ( this.settings.steering.angle !== 0 && this.materials.lights.LF ||
+					( this.settings.steering.fix ) ) {
 
 				this.settings.turnLightsHelper.defColor.setHex( this.materials.lights.LF.color.getHex() );
 				this.settings.turnLightsHelper.defEmissive.setHex( this.materials.lights.LF.emissive.getHex() );
@@ -402,9 +518,11 @@ class Vehicle {
 				// eslint-disable-next-line max-len
 				this.settings.turnLightsHelper.defEmissiveRear.setHex( this.materials.lights.rearTurns.L.emissive.getHex() );
 
-				if ( this.settings.steering.angle > 0 ) {
+				if ( ( this.settings.steering.angle > 0 ) ||
+					( this.settings.steering.fix && this.settings.steering.stw > 0.1 ) ) {
 					this.settings.turnLightsHelper.mainOperation = 1;
-				} else if ( this.settings.steering.angle < 0 ) {
+				} else if ( ( this.settings.steering.angle < 0 ) ||
+					( this.settings.steering.fix && this.settings.steering.stw < -0.1 ) ) {
 					this.settings.turnLightsHelper.mainOperation = 2;
 				}
 			} else {
@@ -413,14 +531,14 @@ class Vehicle {
 
 			break;
 		case 1:
-			if ( this.settings.steering.angle === 0 ) {
+			if ( ( this.settings.steering.angle === 0 && !this.settings.steering.fix ) ) {
 				this.settings.turnLightsHelper.mainOperation = 3;
 			}
 
 			this.turnLightControl( this.materials.lights.LF, this.materials.lights.rearTurns.L );
 			break;
 		case 2:
-			if ( this.settings.steering.angle === 0 ) {
+			if ( ( this.settings.steering.angle === 0 && !this.settings.steering.fix ) ) {
 				this.settings.turnLightsHelper.mainOperation = 3;
 			}
 
@@ -489,6 +607,7 @@ class Vehicle {
 			this.body.update();
 			this.updateRaycastVehicle();
 			this.steeringControll( this.settings.steering.angle );
+			this.speedControll();
 			this.updateSupports();
 			if ( this.timer ) {
 				this.updateTurnLights();
@@ -498,18 +617,25 @@ class Vehicle {
 				this.updateLightHelper();
 			}
 
-			for ( const wheel of Object.values( this.wheels ) ) {
-				wheel.updateBodyInfo();
-				wheel.update();
-			}
+			this.wheels.LF.updateBodyInfo();
+			this.wheels.LF.update();
 
+			this.wheels.RF.updateBodyInfo();
+			this.wheels.RF.update();
+
+			this.wheels.LR.updateBodyInfo();
+			this.wheels.LR.update();
+
+			this.wheels.RR.updateBodyInfo();
+			this.wheels.RR.update();
 		}
 	}
 
 	updateRaycastVehicle() {
-		for ( let i = 0; i < this.raycastVehicle.wheelInfos.length; i++ ) {
-			this.raycastVehicle.updateWheelTransform( i );
-		}
+		this.raycastVehicle.updateWheelTransform( 0 );
+		this.raycastVehicle.updateWheelTransform( 1 );
+		this.raycastVehicle.updateWheelTransform( 2 );
+		this.raycastVehicle.updateWheelTransform( 3 );
 	}
 
 	updateSupports() {
@@ -651,18 +777,26 @@ class Vehicle {
 		this.materials.rim.RR.color.setHex( color );
 	}
 
-	changeVisuPhysicMesh() {
-		this.changeVisuPhysicBodyMesh();
-		this.changeVisuPhysicWheelsMesh();
+	changeVisuPhysicMesh( status ) {
+
+		if ( status && this.materials.body ) {
+			this.materials.body.wireframe = true;
+		} else {
+			this.materials.body.wireframe = false;
+		}
+
+		this.changeVisuPhysicBodyMesh( status );
+		this.changeVisuPhysicWheelsMesh( status );
+
 	}
 
-	changeVisuPhysicBodyMesh() {
-		this.body.graphic.physicMesh.visible = !this.body.graphic.physicMesh.visible;
+	changeVisuPhysicBodyMesh( status ) {
+		this.body.changeVisuPhysicMesh( status );
 	}
 
-	changeVisuPhysicWheelsMesh() {
+	changeVisuPhysicWheelsMesh( status ) {
 		for ( const wheel of Object.values( this.wheels ) ) {
-			wheel.graphic.physicMesh.visible = !wheel.graphic.physicMesh.visible;
+			wheel.changeVisuPhysicMesh( status );
 		}
 	}
 

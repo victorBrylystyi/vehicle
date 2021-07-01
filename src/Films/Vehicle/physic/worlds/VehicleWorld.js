@@ -11,7 +11,7 @@ class VehicleWorld {
 	init() {
 		this.world.gravity.set( 0, -9.81, 0 );
 		this.world.broadphase = new CANNON.SAPBroadphase( this.world );
-		this.world.solver.iterations = 15;
+		this.world.solver.iterations = 20;
 		this.addContactMaterials( this.world );
 	}
 
@@ -22,16 +22,16 @@ class VehicleWorld {
 		this.wheelMaterial = new CANNON.Material( 'wheelMaterial' );
 		this.coneMaterial = new CANNON.Material( 'coneMaterial' );
 		this.groundWheelContactMaterial = new CANNON.ContactMaterial( this.wheelMaterial, this.groundMaterial, {
-			friction: 0.4,
-			restitution: 0.3,
+			friction: 0.1,
+			restitution: 0.1,
 			contactEquationStiffness: 1e8,
 			contactEquationRelaxation: 3,
 			frictionEquationStiffness: 1e8,
 			frictionEquationRegularizationTime: 3
 		} );
 		this.groundConeContactMaterial = new CANNON.ContactMaterial( this.coneMaterial, this.groundMaterial, {
-			friction: 0.4,
-			restitution: 0.3,
+			friction: 0.1,
+			restitution: 0.1,
 			contactEquationStiffness: 1e8,
 			contactEquationRelaxation: 3
 			// contactEquationStiffness: 1000

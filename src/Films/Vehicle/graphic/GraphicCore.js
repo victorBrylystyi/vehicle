@@ -52,13 +52,17 @@ class GraphicCore extends Core {
 
 		this.renderer = new THREE.WebGLRenderer( {
 			canvas: this.canvas,
-			antialias: true
+			antialias: true,
+			autoClear: true
 			// logarithmicDepthBuffer: true
 		} );
+
+		this.renderer.setPixelRatio( window.devicePixelRatio );
+
 		// this.renderer.shadowMap.enabled = false;
 		// this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-		this.threeClock = new THREE.Clock();
+		// this.threeClock = new THREE.Clock();
 
 		window.addEventListener( 'resize', () => {
 			this.resize();
@@ -75,34 +79,45 @@ class GraphicCore extends Core {
 
 	preStart() {
 		this.startLoadAssets();
-		this.threeClock.start();
+		// this.threeClock.start();
 		if ( this.timer ) {
 			this.timer.preStart();
 		}
 
+		this.renderer.clear();
+
 		console.log( 'THREE done prestart' );
 	}
 
-	update() {
+	update( dt ) {
 		if ( this.timer ) {
 			this.timer.update();
 		}
 
-		this.animate();
+		this.animate( dt );
 	}
 
 	postStart() {
-		this.threeClock.stop();
+		// this.threeClock.stop();
 		if ( this.timer ) {
 			this.timer.postStart();
 		}
+
+		this.renderer.dispose();
 	}
 
 
-	animate() {
-		this.appConfig.fi += this.appConfig.speed * this.threeClock.getDelta() * this.appConfig.fps;
+	animate( dt ) {
+
+		// this.appConfig.fi += this.appConfig.speed * this.threeClock.getDelta() * this.appConfig.fps;
 		this.currentScene.update( this.appConfig.fi );
-		this.renderer.render( this.currentScene.scene, this.currentScene.camera );
+		// this.renderer.clear();
+		if ( ( dt * this.appConfig.fps ) < 1.2 ) {
+			this.renderer.render( this.currentScene.scene, this.currentScene.camera );
+		}
+		// this.renderer.render( this.currentScene.scene, this.currentScene.camera );
+
+		// sconsole.log( dt * this.appConfig.fps );
 	}
 
 	resize() {
@@ -179,6 +194,7 @@ class GraphicCore extends Core {
 		guideMenu.style.left = '0';
 		guideMenu.style.margin = '5px';
 
+
 		const text = {
 			wasd: {
 				element: document.createElement( 'p' ),
@@ -215,6 +231,18 @@ class GraphicCore extends Core {
 			r: {
 				element: document.createElement( 'p' ),
 				textContent: 'R - Reset vehicle'
+			},
+			b: {
+				element: document.createElement( 'p' ),
+				textContent: 'B - Set/Reset Handbreake'
+			},
+			e: {
+				element: document.createElement( 'p' ),
+				textContent: 'E - On/Off cruise controll (W - "add"; S - "sub")'
+			},
+			f: {
+				element: document.createElement( 'p' ),
+				textContent: 'F - Set/Reset Steering angle'
 			}
 
 		};
@@ -231,14 +259,29 @@ class GraphicCore extends Core {
 		text.v.element.textContent = text.v.textContent;
 		guideMenu.appendChild( text.v.element );
 
+		text.b.element.textContent = text.b.textContent;
+		guideMenu.appendChild( text.b.element );
+
+		text.e.element.textContent = text.e.textContent;
+		guideMenu.appendChild( text.e.element );
+
+		text.f.element.textContent = text.f.textContent;
+		guideMenu.appendChild( text.f.element );
+
 		text.space.element.textContent = text.space.textContent;
 		guideMenu.appendChild( text.space.element );
-
-		console.log( this.stats );
 
 		this.stats.dom.style.position = 'relative';
 		this.stats.dom.style.float = 'left';
 		guideMenu.appendChild( this.stats.dom );
+
+		this.guide = {
+			element: guideMenu,
+			guideText: text
+		};
+		this.currentScene.addGuideText( this.guide );
+
+		console.log( this.currentScene );
 
 		if ( this.domElement ) {
 			this.domElement.appendChild( guideMenu );

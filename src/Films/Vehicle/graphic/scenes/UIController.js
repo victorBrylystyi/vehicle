@@ -120,7 +120,7 @@ class UIController {
 				currentScene.gui.changeSceneBackground( color );
 			} );
 
-		scene.add( params, 'cameraMaxDist', 0, 200, 1 )
+		scene.add( params, 'cameraMaxDist', 0, 20, 1 )
 			.onChange( ( d ) => {
 				currentScene.settings.controlsMaxDist = d;
 				currentScene.changeControlMaxDist();
@@ -151,6 +151,7 @@ class UIController {
 
 	guiAddVehicleFolder( currentScene ) {
 		const params = {
+			physicBody: false,
 			compression: currentScene.vehicle.wheelOptions.dampingCompression,
 			relaxation: currentScene.vehicle.wheelOptions.dampingRelaxation,
 			clearence: 0,
@@ -187,11 +188,16 @@ class UIController {
 		};
 		const vehicle = this.gui.addFolder( 'Vehicle' );
 
-		vehicle.add( params, 'maxEngineForce', 0, 10000, 1 )
+		vehicle.add( params, 'physicBody' )
+			.onChange( ( v ) => {
+				currentScene.gui.changeVehicleBodyPhysicBodyVisu( v );
+			} );
+
+		vehicle.add( params, 'maxEngineForce', 0, 1000, 1 )
 			.onChange( ( e ) => {
 				currentScene.gui.changeVehicleMaxEngine( e );
 			} );
-		vehicle.add( params, 'maxBrakeForce', 300, 3000, 1 )
+		vehicle.add( params, 'maxBrakeForce', 10, 100, 1 )
 			.onChange( ( b ) => {
 				currentScene.gui.changeVehicleMaxBrake( b );
 			} );
@@ -260,9 +266,9 @@ class UIController {
 			.onChange( ( v ) => {
 				currentScene.gui.changeVehicleRelaxation( v );
 			} );
-		susp.add( params, 'clearence', -0.5, 0.5, 0.01 )
+		susp.add( params, 'clearence', -0.4, 0.4, 0.01 )
 			.onChange( ( v ) => {
-				currentScene.gui.changeVehicleClearence( v );
+				currentScene.gui.changeVehicleClearence( v / 15 );
 			} );
 
 		body.add( params.body, 'emissiveIntensity', 0, 2, 0.1 )

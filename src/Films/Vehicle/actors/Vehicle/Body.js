@@ -3,13 +3,14 @@ import * as CANNON from 'cannon';
 import * as THREE from 'three';
 
 class Body extends GObject {
-	constructor ( phW, dim, mass ) {
+	constructor ( phW, dim, mass, initPos ) {
 		super( phW );
 		this.dim = dim;
+		this.initPos = initPos;
 		this.mass = mass;
 		this.physicMeshMatrtial = new THREE.MeshBasicMaterial( {
 			color: 'red',
-			wireframe: false,
+			wireframe: true,
 			side: THREE.DoubleSide
 		} );
 		this.init();
@@ -27,17 +28,17 @@ class Body extends GObject {
 	}
 
 	createBody() {
-		let chassisShape = new CANNON.Box( new CANNON.Vec3( this.dim.x / 2.1, this.dim.y / 2.5, this.dim.z / 3 ) );
+		const chassisShape = new CANNON.Box( new CANNON.Vec3( this.dim.x / 2.1, this.dim.y / 2.3, this.dim.z / 2.25 ) );
 
 		this.physicBody = new CANNON.Body( { mass: this.mass } );
 
 		this.physicBody.name = 'vehicle body';
 		this.physicBody.addShape( chassisShape );
-		this.physicBody.position.set( 11, 15, 4 );
+		this.physicBody.position.copy( this.initPos );
 		let qR = new CANNON.Quaternion();
 		qR.setFromAxisAngle( new CANNON.Vec3( 1, 0, 0 ), -Math.PI / 2 );
 		this.physicBody.quaternion = qR;
-		this.physicBody.angularVelocity.set( 0, 0, 0.5 );
+		this.physicBody.angularVelocity.set( 0, 0, 0.1 );
 	}
 
 	createHeadlights() {
@@ -98,35 +99,25 @@ class Body extends GObject {
 		};
 
 		this.headLightsFlare.geometryLF.setAttribute( 'position', new THREE.Float32BufferAttribute( [
-			0.3,
-			-0.5,
-			-0.1
+			0.3 / 15,
+			-0.5 / 15,
+			-0.1 / 15
 		], 3 ) );
 		this.headLightsFlare.LF = new THREE.Points( this.headLightsFlare.geometryLF, this.headLightsFlare.material );
 		this.headLightsFlare.geometryRF.setAttribute( 'position', new THREE.Float32BufferAttribute( [
-			0.3,
-			0.5,
-			-0.1
+			0.3 / 15,
+			0.5 / 15,
+			-0.1 / 15
 		], 3 ) );
 		this.headLightsFlare.RF = new THREE.Points( this.headLightsFlare.geometryRF, this.headLightsFlare.material );
 	}
 
 	headlightHelp( angle ) {
 		if ( this.headLights ) {
-			let helpLF = 0,
-				helpRF = 0;
-			let power = 50;
-
-			if ( angle > 0 ) {
-				helpLF = Math.sin( angle ) * power;
-				helpRF = 0;
-			} else {
-				helpRF = Math.sin( angle ) * power;
-				helpLF = 0;
-			}
-
-			this.headLights.LF.target.position.y = this.headLights.LF.position.y + helpLF;
-			this.headLights.RF.target.position.y = this.headLights.RF.position.y + helpRF;
+			this.headLights.LF.target.position.y = this.headLights.LF.position.y +
+			( ( angle > 0 ) ? Math.sin( angle ) * 50 : 0 );
+			this.headLights.RF.target.position.y = this.headLights.RF.position.y +
+			( ( angle <= 0 ) ? Math.sin( angle ) * 50 : 0 );
 		}
 	}
 
@@ -137,15 +128,15 @@ class Body extends GObject {
 	setLightsPositions() {
 
 		const front = {
-			x: 17.8,
-			y: 5.53,
-			z: -0.6
+			x: 17.8 / 15,
+			y: 5.53 / 15,
+			z: -0.6 / 15
 		};
 
 		const rear = {
-			x: -16.9,
-			y: 4.3,
-			z: 1
+			x: -16.9 / 15,
+			y: 4.3 / 15,
+			z: 1 / 15
 		};
 
 		const flLight = this.foundMeshByName( 'f_l_light', this.children );
@@ -159,9 +150,9 @@ class Body extends GObject {
 		rrLight.position.set( rear.x, -rear.y, rear.z );
 
 		this.foundMeshByName( 'lf', this.children )
-			.position.set( flLight.position.x + 0.55, flLight.position.y, flLight.position.z );
+			.position.set( flLight.position.x + 0.55 / 15, flLight.position.y, flLight.position.z );
 		this.foundMeshByName( 'rf', this.children )
-			.position.set( frLight.position.x + 0.55, frLight.position.y, frLight.position.z );
+			.position.set( frLight.position.x + 0.55 / 15, frLight.position.y, frLight.position.z );
 	}
 
 }

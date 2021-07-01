@@ -13,21 +13,23 @@ class VehicleScene {
 		this.canvas = canvas;
 		this.physicWorld = physicWorld;
 		this.scene = new THREE.Scene();
-		this.camera = new THREE.PerspectiveCamera( 75, this.canvas.clientWidth / this.canvas.clientHeight, 1, 3000 );
+		this.camera = new THREE.PerspectiveCamera( 75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000 );
 		this.settings = {
 			sceneLightBias: 0,
-			controlsMaxDist: 45,
-			controlsMaxAngle: 1.45
+			controlsMaxDist: 2.5,
+			controlsMaxAngle: 1.66
 		};
 		this.defBackground = new THREE.Color( 0xeeeeee );
+		this.guide = null;
 		this.init();
 
 		return this;
 	}
 
 	init() {
-		this.camera.position.x = 50;
-		this.camera.position.y = 20;
+		this.camera.position.x = 82.98;
+		this.camera.position.y = 1.387;
+		this.camera.position.z = -9.621;
 
 		this.controls = new OrbitControls( this.camera, this.canvas );
 		this.controls.dampingFactor = 0.05;
@@ -35,15 +37,15 @@ class VehicleScene {
 
 		this.scene.add( new THREE.AmbientLight( 'white', 0.3 ) );
 
-		this.controls.minDistance = 22;
+		this.controls.minDistance = 1.7;
 		this.controls.maxDistance = this.settings.controlsMaxDist;
 
 		this.controls.maxPolarAngle = this.settings.controlsMaxAngle;
 
 		this.scene.background = this.defBackground;
 
-		const near = 20;
-		const far = 300;
+		const near = 0.5;
+		const far = 15;
 		this.fog = new THREE.Fog( this.scene.background, near, far );
 
 		this.addSceneLight();
@@ -53,86 +55,86 @@ class VehicleScene {
 		this.field = new Map();
 
 		const ground = new Ground( this.physicWorld, {
-			sizeX: 100,
-			sizeY: 100,
-			heightPlane: 10,
-			amplitude: 0.1,
-			elementSize: 5
+			sizeX: 20,
+			sizeY: 20,
+			heightPlane: 2,
+			amplitude: 2,
+			elementSize: 30
 		}, new THREE.Vector3( -250, 0, 250 ) );
 
-		const ground2 = new Ground( this.physicWorld, {
-			sizeX: 100,
-			sizeY: 100,
-			heightPlane: 10,
-			amplitude: 3,
-			elementSize: 5
-		}, new THREE.Vector3( -745, 0, 250 ) );
+		// const ground2 = new Ground( this.physicWorld, {
+		// 	sizeX: 100,
+		// 	sizeY: 100,
+		// 	heightPlane: 10,
+		// 	amplitude: 3,
+		// 	elementSize: 5
+		// }, new THREE.Vector3( -745, 0, 250 ) );
 
-		const ground3 = new Ground( this.physicWorld, {
-			sizeX: 100,
-			sizeY: 100,
-			heightPlane: 10,
-			amplitude: 1,
-			elementSize: 5
-		}, new THREE.Vector3( 245, 0, 250 ) );
+		// const ground3 = new Ground( this.physicWorld, {
+		// 	sizeX: 100,
+		// 	sizeY: 100,
+		// 	heightPlane: 10,
+		// 	amplitude: 1,
+		// 	elementSize: 5
+		// }, new THREE.Vector3( 245, 0, 250 ) );
 
-		const ground4 = new Ground( this.physicWorld, {
-			sizeX: 100,
-			sizeY: 100,
-			heightPlane: 10,
-			amplitude: 0.1,
-			elementSize: 5
-		}, new THREE.Vector3( 245, 0, 745 ) );
+		// const ground4 = new Ground( this.physicWorld, {
+		// 	sizeX: 100,
+		// 	sizeY: 100,
+		// 	heightPlane: 10,
+		// 	amplitude: 0.1,
+		// 	elementSize: 5
+		// }, new THREE.Vector3( 245, 0, 745 ) );
 
-		const ground5 = new Ground( this.physicWorld, {
-			sizeX: 100,
-			sizeY: 100,
-			heightPlane: 10,
-			amplitude: 2,
-			elementSize: 5
-		}, new THREE.Vector3( 245, 0, -245 ) );
+		// const ground5 = new Ground( this.physicWorld, {
+		// 	sizeX: 100,
+		// 	sizeY: 100,
+		// 	heightPlane: 10,
+		// 	amplitude: 2,
+		// 	elementSize: 5
+		// }, new THREE.Vector3( 245, 0, -245 ) );
 
-		const ground6 = new Ground( this.physicWorld, {
-			sizeX: 100,
-			sizeY: 100,
-			heightPlane: 10,
-			amplitude: 3,
-			elementSize: 5
-		}, new THREE.Vector3( -250, 0, -245 ) );
+		// const ground6 = new Ground( this.physicWorld, {
+		// 	sizeX: 100,
+		// 	sizeY: 100,
+		// 	heightPlane: 10,
+		// 	amplitude: 3,
+		// 	elementSize: 5
+		// }, new THREE.Vector3( -250, 0, -245 ) );
 
-		const ground7 = new Ground( this.physicWorld, {
-			sizeX: 100,
-			sizeY: 100,
-			heightPlane: 10,
-			amplitude: 1,
-			elementSize: 5
-		}, new THREE.Vector3( -250, 0, 745 ) );
+		// const ground7 = new Ground( this.physicWorld, {
+		// 	sizeX: 100,
+		// 	sizeY: 100,
+		// 	heightPlane: 10,
+		// 	amplitude: 1,
+		// 	elementSize: 5
+		// }, new THREE.Vector3( -250, 0, 745 ) );
 
-		const ground8 = new Ground( this.physicWorld, {
-			sizeX: 100,
-			sizeY: 100,
-			heightPlane: 10,
-			amplitude: 2,
-			elementSize: 5
-		}, new THREE.Vector3( -745, 0, 745 ) );
+		// const ground8 = new Ground( this.physicWorld, {
+		// 	sizeX: 100,
+		// 	sizeY: 100,
+		// 	heightPlane: 10,
+		// 	amplitude: 2,
+		// 	elementSize: 5
+		// }, new THREE.Vector3( -745, 0, 745 ) );
 
-		const ground9 = new Ground( this.physicWorld, {
-			sizeX: 100,
-			sizeY: 100,
-			heightPlane: 10,
-			amplitude: 5,
-			elementSize: 5
-		}, new THREE.Vector3( -745, 0, -245 ) );
+		// const ground9 = new Ground( this.physicWorld, {
+		// 	sizeX: 100,
+		// 	sizeY: 100,
+		// 	heightPlane: 10,
+		// 	amplitude: 5,
+		// 	elementSize: 5
+		// }, new THREE.Vector3( -745, 0, -245 ) );
 
 		this.field.set( 'ground1', ground );
-		this.field.set( 'ground2', ground2 );
-		this.field.set( 'ground3', ground3 );
-		this.field.set( 'ground4', ground4 );
-		this.field.set( 'ground5', ground5 );
-		this.field.set( 'ground6', ground6 );
-		this.field.set( 'ground7', ground7 );
-		this.field.set( 'ground8', ground8 );
-		this.field.set( 'ground9', ground9 );
+		// this.field.set( 'ground2', ground2 );
+		// this.field.set( 'ground3', ground3 );
+		// this.field.set( 'ground4', ground4 );
+		// this.field.set( 'ground5', ground5 );
+		// this.field.set( 'ground6', ground6 );
+		// this.field.set( 'ground7', ground7 );
+		// this.field.set( 'ground8', ground8 );
+		// this.field.set( 'ground9', ground9 );
 
 		this.gui = {
 			changeSceneBackground: ( colorHex ) => {
@@ -237,6 +239,10 @@ class VehicleScene {
 
 			changeVehicleMaterialSuppColor: ( color ) => {
 				this.vehicle.changeMaterialSuppColor( color );
+			},
+
+			changeVehicleBodyPhysicBodyVisu: ( status ) => {
+				this.vehicle.changeVisuPhysicMesh( status );
 			}
 
 		};
@@ -251,6 +257,11 @@ class VehicleScene {
 		this.scene.add( this.vehicle.wheels.LR );
 		this.scene.add( this.vehicle.wheels.RF );
 		this.scene.add( this.vehicle.wheels.RR );
+	}
+
+	addGuideText( guide ) {
+		this.guide = guide;
+		this.vehicle.guide = this.guide;
 	}
 
 	addAssets( data ) {
@@ -294,9 +305,14 @@ class VehicleScene {
 				// child.material = mat;
 				// child.material.name = name;
 			} );
+
 			const body = foundMeshByName( 'body', data.map.scene.children );
+
+			// this.testConvPol( body.children[ 0 ] );
+
 			this.vehicle.materials.body = foundMaterialInGroupByName( 'testCarPaint', body );
-			this.vehicle.materials.body.emissive.setHex( 0xa29d9d );
+			// this.vehicle.materials.body.wireframe = true;
+			this.vehicle.materials.body.emissive.setHex( 0x193e14 );
 
 
 			const suppRF = foundMeshByName( 'frSup', data.map.scene.children );
@@ -421,6 +437,8 @@ class VehicleScene {
 			this.vehicle.wheels.RR.name = 'RR';
 			this.vehicle.wheels.LR.name = 'LR';
 
+			data.map = null;
+
 			console.log( this.vehicle );
 			break;
 		case 'ground_color':
@@ -459,32 +477,6 @@ class VehicleScene {
 		}
 	}
 
-	updateLinks() {
-
-		const foundMeshByName = ( name = '', source ) => {
-			for ( let i = 0; i < source.length; i++ ) {
-				if ( source[ i ].name === name ) {
-					return source[ i ];
-				}
-			}
-		};
-
-		this.vehicle.body = null;
-		this.vehicle.body = foundMeshByName( 'body', this.scene.children );
-
-		this.vehicle.wheels.LF = null;
-		this.vehicle.wheels.LF = foundMeshByName( 'LF', this.scene.children );
-
-		this.vehicle.wheels.RF = null;
-		this.vehicle.wheels.RF = foundMeshByName( 'RF', this.scene.children );
-
-		this.vehicle.wheels.LR = null;
-		this.vehicle.wheels.LR = foundMeshByName( 'LR', this.scene.children );
-
-		this.vehicle.wheels.RR = null;
-		this.vehicle.wheels.RR = foundMeshByName( 'RR', this.scene.children );
-	}
-
 	loadAllAssets() {
 
 		for ( let i = 0; i < this.vehicle.body.children.length; i++ ) {
@@ -502,10 +494,6 @@ class VehicleScene {
 				}
 			}
 		}
-
-		this.field = null;
-		this.updateLinks();
-		console.log( this );
 	}
 
 	addFog() {

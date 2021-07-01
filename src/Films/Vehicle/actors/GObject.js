@@ -129,6 +129,14 @@ class GObject extends THREE.Group {
 		}
 	}
 
+	changeVisuPhysicMesh( staus ) {
+		if ( this.graphic.physicMesh && staus ) {
+			this.graphic.physicMesh.visible = true;
+		} else {
+			this.graphic.physicMesh.visible = false;
+		}
+	}
+
 	body2mesh ( dim ) {
 		let obj = new THREE.Object3D();
 		for ( let l = 0; l < this.physicBody.shapes.length; l++ ) {
@@ -139,6 +147,9 @@ class GObject extends THREE.Group {
 			switch( shape.type ) {
 
 			case CANNON.Shape.types.BOX:
+				// let box_geometry = new THREE.BoxGeometry( shape.halfExtents.x * 2 * 15,
+				// 	shape.halfExtents.y * 2 * 15,
+				// 	shape.halfExtents.z * 2 * 15 );
 				let box_geometry = new THREE.BoxGeometry( shape.halfExtents.x * 2,
 					shape.halfExtents.y * 2,
 					shape.halfExtents.z * 2 );
@@ -151,6 +162,11 @@ class GObject extends THREE.Group {
 					shape.drawData.height,
 					shape.drawData.segments,
 					shape.drawData.segments );
+				// let sphere_geometry = new THREE.CylinderGeometry( shape.drawData.radius,
+				// 	shape.drawData.radius * 15,
+				// 	shape.drawData.height * 15,
+				// 	shape.drawData.segments * 15,
+				// 	shape.drawData.segments * 15 );
 				sphere_geometry.rotateX( Math.PI / 2 );
 				mesh = new THREE.Mesh( sphere_geometry, this.physicMeshMatrtial );
 
@@ -222,6 +238,7 @@ class GObject extends THREE.Group {
 				let geo = new THREE.BufferGeometry();
 
 				let vert = [];
+				let ind = [];
 
 				// Add vertices
 				for ( let i = 0; i < shape.vertices.length; i++ ) {
@@ -236,9 +253,9 @@ class GObject extends THREE.Group {
 					// geo.vertices.push(new THREE.Vector3(v.x, v.y, v.z));
 				}
 
-				// for(var i=0; i < shape.faces.length; i++){
+				for( let i = 0; i < shape.faces.length; i++ ) {
 				//     var face = shape.faces[i];
-
+					ind[ i ] = shape.faces[ i ];
 				//     // add triangles
 				//     var a = face[0];
 				//     for (var j = 1; j < face.length - 1; j++) {
@@ -246,8 +263,10 @@ class GObject extends THREE.Group {
 				//         var c = face[j + 1];
 				//         geo.faces.push(new THREE.Face3(a, b, c));
 				//     }
-				// }
+				}
+
 				geo.setAttribute( 'position', new THREE.BufferAttribute( new Float32Array( vert ), 3 ) );
+				geo.setIndex( ind );
 				geo.computeBoundingSphere();
 				geo.computeVertexNormals();
 				mesh = new THREE.Mesh( geo, this.physicMeshMatrtial );

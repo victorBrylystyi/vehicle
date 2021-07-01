@@ -10,7 +10,7 @@ class Wheel extends GObject {
 		this.mass = mass;
 		this.physicMeshMatrtial = new THREE.MeshBasicMaterial( {
 			color: 'blue',
-			wireframe: false,
+			wireframe: true,
 			side: THREE.DoubleSide
 		} );
 		this.init();

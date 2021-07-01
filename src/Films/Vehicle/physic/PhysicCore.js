@@ -8,6 +8,7 @@ class PhysicCore extends Core {
 		this.worldFrequency = 60;
 		this.isPaused = false;
 		this.dT = 1 / this.worldFrequency;
+		this.maxSubSteps = 2;
 		this.world = new CANNON.World();
 		this.currentWorld = null;
 		this.name = 'cannon.js app';
@@ -55,12 +56,12 @@ class PhysicCore extends Core {
 		this.postStart();
 	}
 
-	update() {
+	update( timeSinceLastCall ) {
 		if ( this.currentWorld ) {
 			this.currentWorld.update();
 		}
 
-		this.world.step( this.dT );
+		this.world.step( this.dT, timeSinceLastCall, this.maxSubSteps );
 	}
 }
 
