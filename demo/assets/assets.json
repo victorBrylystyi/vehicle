@@ -1,11 +1,5 @@
 [
     {
-        "type": "3dModel",
-        "name": "vehicleModel",
-        "path": "./assets/gltf/",
-        "url": "amg_e63.glb"
-    },
-    {
         "type": "env",
         "name": "v1",
         "path": "./assets/env/v1/",
@@ -56,5 +50,11 @@
         "name": "headlightsFlare",
         "path": "./assets/head/",
         "url": "flareHead.jpg"
+    },
+    {
+        "type": "3dModel",
+        "name": "vehicleModel",
+        "path": "./assets/gltf/",
+        "url": "amg_e63.glb"
     }
 ]
