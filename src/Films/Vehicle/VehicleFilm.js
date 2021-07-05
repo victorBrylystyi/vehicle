@@ -22,23 +22,30 @@ class VehicleFilm extends Film {
 
 		let keyUp = ( event.type === 'keyup' );
 
-		switch( event.code ) {
-		case 'KeyV':
-			if ( keyUp ) {
-				this.ui.changeVisibleGUI();
-			}
 
-			break;
-		case 'KeyL':
+		switch( event.code ) {
+		// case 'KeyV':
+		// 	if ( keyUp ) {
+		// 		this.ui.changeVisibleGUI();
+		// 	}
+
+		// 	break;
+		// case 'KeyL':
+		// 	if ( keyUp ) {
+		// 		this.cores.graphic.currentScene.vehicle.changeBodyHeadlightsVisible();
+		// 	}
+
+		// 	break;
+		case 'KeyP':
 			if ( keyUp ) {
-				this.cores.graphic.currentScene.vehicle.changeBodyHeadlightsVisible();
+				console.log( this.cores.graphic.currentScene.camera.position );
 			}
 
 			break;
 		default:
 		}
 
-		this.cores.graphic.currentScene.vehicle.handler( event );
+		// this.cores.graphic.currentScene.vehicle.handler( event );
 
 	}
 }

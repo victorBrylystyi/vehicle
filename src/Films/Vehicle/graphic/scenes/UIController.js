@@ -12,9 +12,77 @@ class UIController {
 
 	init() {
 		this.guiSettings();
-		this.guiAddWorldFolder( this.film.cores.physic, this.film.cores.graphic );
-		this.guiAddSceneFolder( this.film.cores.graphic.currentScene );
-		this.guiAddVehicleFolder( this.film.cores.graphic.currentScene );
+
+		switch ( this.film.cores.graphic.currentScene.name ) {
+		case 'vehicle scene':
+			this.guiAddWorldFolder( this.film.cores.physic, this.film.cores.graphic );
+			this.guiAddSceneFolder( this.film.cores.graphic.currentScene );
+			this.guiAddVehicleFolder( this.film.cores.graphic.currentScene );
+			break;
+		case 'test scene':
+			this.testScene( this.film.cores.graphic.currentScene );
+			break;
+		default:
+
+			break;
+		}
+
+
+	}
+
+	testScene( currScene ) {
+
+		const scene = this.gui.addFolder( 'Scene' );
+
+
+		const params = {
+			background: currScene.scene.background.getHex(),
+			hemLight: {
+				skyColor: currScene.hemLight.color.getHex(),
+				groundColor: currScene.hemLight.groundColor.getHex(),
+				intensity: currScene.hemLight.intensity
+			},
+			dirLight: {
+				intensity: currScene.dirLight.intensity,
+				color: currScene.dirLight.color.getHex()
+			}
+
+		};
+
+		scene.addColor( params, 'background' )
+			.onChange( ( color ) => {
+				currScene.scene.background.setHex( color );
+			} );
+
+		const hL = scene.addFolder( 'Hemisphere' );
+
+		hL.add( params.hemLight, 'intensity', 0, 2, 0.1 )
+			.onChange( ( intensity ) => {
+				currScene.hemLight.intensity = intensity;
+			} );
+		hL.addColor( params.hemLight, 'skyColor' )
+			.onChange( ( color ) => {
+				currScene.hemLight.color.setHex( color );
+			} );
+
+		hL.addColor( params.hemLight, 'groundColor' )
+			.onChange( ( color ) => {
+				currScene.hemLight.groundColor.setHex( color );
+			} );
+
+		const dL = scene.addFolder( 'Dir Light' );
+
+		dL.add( params.dirLight, 'intensity', 0, 2, 0.1 )
+			.onChange( ( intensity ) => {
+				currScene.dirLight.intensity = intensity;
+			} );
+		dL.addColor( params.dirLight, 'color' )
+			.onChange( ( color ) => {
+				currScene.dirLight.color.setHex( color );
+			} );
+
+		// const body = scene.addFolder( 'Body' );
+
 	}
 
 	guiSettings() {

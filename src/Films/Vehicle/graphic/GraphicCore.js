@@ -1,10 +1,12 @@
 /* eslint-disable no-empty-function */
 
+
 import * as THREE from 'three';
 import { GraphicLoader } from './GraphicLoader';
 import { VehicleScene } from './scenes/VehicleScene';
 import { LoaderIndicator } from './LoaderIndicator';
 import { Timer } from './Timer';
+// import { TestCarStyle } from './scenes/TestCarStyle';
 
 
 class GraphicCore {
@@ -70,6 +72,7 @@ class GraphicCore {
 			this.resize();
 		} );
 		this.currentScene = new VehicleScene( this.canvas, this.currentPhysicWorld, this.timer );
+		// this.currentScene = new TestCarStyle( this.canvas );
 
 		console.log( this.renderer.info );
 
@@ -112,10 +115,9 @@ class GraphicCore {
 
 
 	animate( dt ) {
-
-		// this.appConfig.fi += this.appConfig.speed * this.threeClock.getDelta() * this.appConfig.fps;
+		this.appConfig.fi += this.appConfig.speed * dt * this.appConfig.fps;
 		this.currentScene.update( this.appConfig.fi );
-		// this.renderer.clear();
+
 		if ( this.pixelRatio === 1 ) {
 			this.renderer.render( this.currentScene.scene, this.currentScene.camera );
 		} else if ( ( this.pixelRatio > 1 ) ) {
@@ -123,15 +125,6 @@ class GraphicCore {
 				this.renderer.render( this.currentScene.scene, this.currentScene.camera );
 			}
 		}
-		// if ( (( dt * this.appConfig.fps ) < 1.2) && this.pixelRatio>1 ) {
-		// 	this.renderer.render( this.currentScene.scene, this.currentScene.camera );
-		// } else if (this.pixelRatio === 1 ){
-
-		// }
-		// console.log( this.renderer.info.render.calls );
-		// this.renderer.render( this.currentScene.scene, this.currentScene.camera );
-
-		// sconsole.log( dt * this.appConfig.fps );
 	}
 
 	resize() {
@@ -150,8 +143,6 @@ class GraphicCore {
 
 		this.pixelRatio = window.devicePixelRatio;
 		this.renderer.setPixelRatio( this.pixelRatio );
-		console.log( this.renderer.getPixelRatio(), this.pixelRatio );
-
 		this.currentScene.resizeAction();
 	}
 
@@ -184,12 +175,14 @@ class GraphicCore {
 					this.cssLoaderBar = null;
 
 					this.resize();
-					this.createGuideMenu();
 				}
+
+				this.createGuideMenu();
+				this.ui.init();
 
 				this.currentScene.assetes = result;
 				this.currentScene.loadAllAssets();
-				this.ui.init();
+
 			} );
 
 			this.loader.load();
@@ -203,109 +196,128 @@ class GraphicCore {
 
 	createGuideMenu() {
 
-		const guideMenu = document.createElement( 'div' );
-		guideMenu.className = 'guide';
+		if ( this.currentScene.name === 'vehicle scene' ) {
 
-		guideMenu.style.position = 'fixed';
-		guideMenu.style.zIndex = '999';
-		guideMenu.style.top = '0';
-		guideMenu.style.left = '0';
-		guideMenu.style.margin = '5px';
+			const guideMenu = document.createElement( 'div' );
+			guideMenu.className = 'guide';
+
+			guideMenu.style.position = 'fixed';
+			guideMenu.style.zIndex = '999';
+			guideMenu.style.top = '0';
+			guideMenu.style.left = '0';
+			guideMenu.style.margin = '5px';
 
 
-		const text = {
-			wasd: {
-				element: document.createElement( 'p' ),
-				textContent: 'W, A, S, D - Movement controls'
-			},
-			w: {
-				element: document.createElement( 'p' ),
-				textContent: 'W - Forward'
-			},
-			a: {
-				element: document.createElement( 'p' ),
-				textContent: 'A - Turn Left'
-			},
-			s: {
-				element: document.createElement( 'p' ),
-				textContent: 'S - Stop/Backward'
-			},
-			d: {
-				element: document.createElement( 'p' ),
-				textContent: 'D - Turn Right'
-			},
-			l: {
-				element: document.createElement( 'p' ),
-				textContent: 'L - On/Off Headlights'
-			},
-			v: {
-				element: document.createElement( 'p' ),
-				textContent: 'V - On/Off Controls'
-			},
-			space: {
-				element: document.createElement( 'p' ),
-				textContent: 'Space - Handbreake'
-			},
-			r: {
-				element: document.createElement( 'p' ),
-				textContent: 'R - Reset vehicle'
-			},
-			b: {
-				element: document.createElement( 'p' ),
-				textContent: 'B - Set/Reset Handbreake'
-			},
-			e: {
-				element: document.createElement( 'p' ),
-				textContent: 'E - On/Off cruise controll (W - "add"; S - "sub")'
-			},
-			f: {
-				element: document.createElement( 'p' ),
-				textContent: 'F - Set/Reset Steering angle'
+			const text = {
+				wasd: {
+					element: document.createElement( 'p' ),
+					textContent: 'W, A, S, D - Movement controls'
+				},
+				w: {
+					element: document.createElement( 'p' ),
+					textContent: 'W - Forward'
+				},
+				a: {
+					element: document.createElement( 'p' ),
+					textContent: 'A - Turn Left'
+				},
+				s: {
+					element: document.createElement( 'p' ),
+					textContent: 'S - Stop/Backward'
+				},
+				d: {
+					element: document.createElement( 'p' ),
+					textContent: 'D - Turn Right'
+				},
+				l: {
+					element: document.createElement( 'p' ),
+					textContent: 'L - On/Off Headlights'
+				},
+				v: {
+					element: document.createElement( 'p' ),
+					textContent: 'V - On/Off Controls'
+				},
+				space: {
+					element: document.createElement( 'p' ),
+					textContent: 'Space - Handbreake'
+				},
+				r: {
+					element: document.createElement( 'p' ),
+					textContent: 'R - Reset vehicle'
+				},
+				b: {
+					element: document.createElement( 'p' ),
+					textContent: 'B - Set/Reset Handbreake'
+				},
+				e: {
+					element: document.createElement( 'p' ),
+					textContent: 'E - On/Off cruise controll (W - "add"; S - "sub")'
+				},
+				f: {
+					element: document.createElement( 'p' ),
+					textContent: 'F - Set/Reset Steering angle'
+				}
+
+			};
+
+			text.wasd.element.textContent = text.wasd.textContent;
+			guideMenu.appendChild( text.wasd.element );
+
+			text.r.element.textContent = text.r.textContent;
+			guideMenu.appendChild( text.r.element );
+
+			text.l.element.textContent = text.l.textContent;
+			guideMenu.appendChild( text.l.element );
+
+			text.v.element.textContent = text.v.textContent;
+			guideMenu.appendChild( text.v.element );
+
+			text.b.element.textContent = text.b.textContent;
+			guideMenu.appendChild( text.b.element );
+
+			text.e.element.textContent = text.e.textContent;
+			guideMenu.appendChild( text.e.element );
+
+			text.f.element.textContent = text.f.textContent;
+			guideMenu.appendChild( text.f.element );
+
+			text.space.element.textContent = text.space.textContent;
+			guideMenu.appendChild( text.space.element );
+
+			this.stats.dom.style.position = 'relative';
+			this.stats.dom.style.float = 'left';
+			guideMenu.appendChild( this.stats.dom );
+
+			this.guide = {
+				element: guideMenu,
+				guideText: text
+			};
+			this.currentScene.addGuideText( this.guide );
+
+			// console.log( this.currentScene );
+
+			if ( this.domElement ) {
+				this.domElement.appendChild( guideMenu );
+			} else {
+				document.body.appendChild( guideMenu );
 			}
+		} else if ( this.currentScene.name === 'test scene' ) {
 
-		};
+			this.stats.dom.style.position = 'fixed';
+			this.stats.dom.style.zIndex = '999';
+			this.stats.dom.style.top = '0';
+			this.stats.dom.style.left = '0';
+			this.stats.dom.style.margin = '5px';
 
-		text.wasd.element.textContent = text.wasd.textContent;
-		guideMenu.appendChild( text.wasd.element );
 
-		text.r.element.textContent = text.r.textContent;
-		guideMenu.appendChild( text.r.element );
-
-		text.l.element.textContent = text.l.textContent;
-		guideMenu.appendChild( text.l.element );
-
-		text.v.element.textContent = text.v.textContent;
-		guideMenu.appendChild( text.v.element );
-
-		text.b.element.textContent = text.b.textContent;
-		guideMenu.appendChild( text.b.element );
-
-		text.e.element.textContent = text.e.textContent;
-		guideMenu.appendChild( text.e.element );
-
-		text.f.element.textContent = text.f.textContent;
-		guideMenu.appendChild( text.f.element );
-
-		text.space.element.textContent = text.space.textContent;
-		guideMenu.appendChild( text.space.element );
-
-		this.stats.dom.style.position = 'relative';
-		this.stats.dom.style.float = 'left';
-		guideMenu.appendChild( this.stats.dom );
-
-		this.guide = {
-			element: guideMenu,
-			guideText: text
-		};
-		this.currentScene.addGuideText( this.guide );
-
-		console.log( this.currentScene );
-
-		if ( this.domElement ) {
-			this.domElement.appendChild( guideMenu );
-		} else {
-			document.body.appendChild( guideMenu );
+			if ( this.domElement ) {
+				this.domElement.appendChild( this.stats.dom );
+			} else {
+				document.body.appendChild( this.stats.dom );
+			}
 		}
+
+
 	}
 
 	prepareCanvas( inpElement ) {
