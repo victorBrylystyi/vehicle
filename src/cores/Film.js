@@ -43,9 +43,9 @@ class Film extends Core {
 
 		this.dt = this.threeClock.getDelta();
 
-		// if ( this.cores.physic ) {
-		// 	this.cores.physic.update( this.dt );
-		// }
+		if ( this.cores.physic ) {
+			this.cores.physic.update( this.dt );
+		}
 		if ( this.cores.graphic ) {
 			this.cores.graphic.update( this.dt );
 		}
