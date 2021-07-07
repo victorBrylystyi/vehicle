@@ -56,5 +56,11 @@
         "name": "vehicleModel",
         "path": "./assets/gltf/",
         "url": "amg_e63.glb"
+    },
+    {
+        "type": "texture",
+        "name": "vehicleMap",
+        "path": "./assets/texture/",
+        "url": "planeBake.jpg"
     }
 ]

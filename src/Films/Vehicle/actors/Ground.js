@@ -23,8 +23,9 @@ class Ground extends GObject {
 	}
 
 	createBody() {
-		let hfShape = this.createHeightFieldShape( this.dim );
-		let quat = new CANNON.Quaternion();
+		const hfShape = this.createHeightFieldShape( this.dim );
+		hfShape.material = this.physicWorld.groundMaterial;
+		const quat = new CANNON.Quaternion();
 		quat.setFromAxisAngle( new CANNON.Vec3( 1, 0, 0 ), -Math.PI / 2 );
 
 		this.physicBody = new CANNON.Body( {

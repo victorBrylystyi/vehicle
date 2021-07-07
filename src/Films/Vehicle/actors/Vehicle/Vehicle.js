@@ -135,7 +135,7 @@ class Vehicle {
 			axleLocal: new CANNON.Vec3( 0, 1, 0 ),
 			chassisConnectionPointLocal: new CANNON.Vec3( 1, 1, 0 ),
 			maxSuspensionTravel: 0.12,
-			customSlidingRotationalSpeed: -10,
+			customSlidingRotationalSpeed: -40,
 			useCustomSlidingRotationalSpeed: true
 		};
 		this.createRaycastVehicle();
@@ -161,6 +161,14 @@ class Vehicle {
 		default:
 			break;
 		}
+	}
+
+	addMap( map ) {
+		this.materials.body.map = map;
+		this.materials.body.map.wrapS = THREE.RepeatWrapping;
+		this.materials.body.map.wrapT = THREE.RepeatWrapping;
+		this.materials.body.map.repeat.set( 40, 40 );
+		this.materials.body.needsUpdate = true;
 	}
 
 	changeBodyHeadlightsVisible( v = undefined ) {

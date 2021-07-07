@@ -74,7 +74,6 @@ class GraphicCore {
 		this.currentScene = new VehicleScene( this.canvas, this.currentPhysicWorld, this.timer );
 		// this.currentScene = new TestCarStyle( this.canvas );
 
-		console.log( this.renderer.info );
 
 		console.log( 'THREE done init' );
 	}

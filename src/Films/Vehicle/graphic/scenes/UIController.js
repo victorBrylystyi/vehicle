@@ -237,19 +237,15 @@ class UIController {
 			maxBrakeForce: currentScene.vehicle.settings.maxBrakeForce,
 			friction: currentScene.vehicle.wheelOptions.frictionSlip,
 			body: {
-				emissiveIntensity: currentScene.vehicle.materials.body.emissiveIntensity,
 				envMapIntensity: currentScene.vehicle.materials.body.envMapIntensity,
 				metalness: currentScene.vehicle.materials.body.metalness,
 				roughness: currentScene.vehicle.materials.body.roughness,
-				emissive: currentScene.vehicle.materials.body.emissive.getHex(),
 				color: currentScene.vehicle.materials.body.color.getHex()
 			},
 			rim: {
-				emissiveIntensity: currentScene.vehicle.materials.rim.LF.emissiveIntensity,
 				envMapIntensity: currentScene.vehicle.materials.rim.LF.envMapIntensity,
 				metalness: currentScene.vehicle.materials.rim.LF.metalness,
 				roughness: currentScene.vehicle.materials.rim.LF.roughness,
-				emissive: currentScene.vehicle.materials.rim.LF.emissive.getHex(),
 				color: currentScene.vehicle.materials.rim.LF.color.getHex()
 			},
 			supp: { color: currentScene.vehicle.materials.supports.LF.color.getHex() }
@@ -339,50 +335,33 @@ class UIController {
 				currentScene.gui.changeVehicleClearence( v / 15 );
 			} );
 
-		body.add( params.body, 'emissiveIntensity', 0, 2, 0.1 )
-			.onChange( ( ei ) => {
-				currentScene.gui.changeVehicleMaterialBodyEI( ei );
-			} );
-		body.add( params.body, 'envMapIntensity', 0, 2, 0.1 )
+		body.add( params.body, 'envMapIntensity', 0, 2, 0.01 )
 			.onChange( ( envI ) => {
 				currentScene.gui.changeVehicleMaterialBodyEnvI( envI );
 			} );
-		body.add( params.body, 'metalness', 0, 1, 0.1 )
+		body.add( params.body, 'metalness', 0, 1, 0.01 )
 			.onChange( ( m ) => {
 				currentScene.gui.changeVehicleMaterialBodyMetalness( m );
 			} );
-		body.add( params.body, 'roughness', 0, 1, 0.1 )
+		body.add( params.body, 'roughness', 0, 1, 0.01 )
 			.onChange( ( r ) => {
 				currentScene.gui.changeVehicleMaterialBodyRoughness( r );
-			} );
-		body.addColor( params.body, 'emissive' )
-			.onChange( ( color ) => {
-				currentScene.gui.changeVehicleMaterialBodyEmissiveColor( color );
 			} );
 		body.addColor( params.body, 'color' )
 			.onChange( ( color ) => {
 				currentScene.gui.changeVehicleMaterialBodyColor( color );
 			} );
-
-		rim.add( params.rim, 'emissiveIntensity', 0, 2, 0.1 )
-			.onChange( ( ei ) => {
-				currentScene.gui.changeVehicleMaterialRimEI( ei );
-			} );
-		rim.add( params.rim, 'envMapIntensity', 0, 2, 0.1 )
+		rim.add( params.rim, 'envMapIntensity', 0, 2, 0.01 )
 			.onChange( ( envI ) => {
 				currentScene.gui.changeVehicleMaterialRimEnvI( envI );
 			} );
-		rim.add( params.rim, 'metalness', 0, 1, 0.1 )
+		rim.add( params.rim, 'metalness', 0, 1, 0.01 )
 			.onChange( ( m ) => {
 				currentScene.gui.changeVehicleMaterialRimMetalness( m );
 			} );
-		rim.add( params.rim, 'roughness', 0, 1, 0.1 )
+		rim.add( params.rim, 'roughness', 0, 1, 0.01 )
 			.onChange( ( r ) => {
 				currentScene.gui.changeVehicleMaterialRimRoughness( r );
-			} );
-		rim.addColor( params.rim, 'emissive' )
-			.onChange( ( color ) => {
-				currentScene.gui.changeVehicleMaterialRimEmissiveColor( color );
 			} );
 		rim.addColor( params.rim, 'color' )
 			.onChange( ( color ) => {

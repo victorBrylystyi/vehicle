@@ -33,6 +33,8 @@ class Wheel extends GObject {
 
 	createBody() {
 		const cylinderShape = new CANNON.Cylinder( this.dim.x / 2, this.dim.x / 2, this.dim.y, 24 );
+		console.log( this.physicWorld.wheelMaterial );
+		cylinderShape.material = this.physicWorld.wheelMaterial;
 		cylinderShape.drawData = {
 			radius: this.dim.x / 2,
 			height: this.dim.y,
@@ -40,7 +42,8 @@ class Wheel extends GObject {
 		};
 		this.physicBody = new CANNON.Body( {
 			mass: this.mass,
-			material: this.physicWorld.wheelMaterial
+			material: this.physicWorld.groundMaterial
+			// material: this.physicWorld.wheelMaterial
 		} );
 		this.physicBody.name = `${ this.name } wheel`;
 		this.physicBody.renderOrder = 2;

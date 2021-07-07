@@ -298,19 +298,19 @@ class VehicleScene {
 				// let prevMaterial = child.material;
 				// child.material = new THREE.MeshPhysicalMaterial();
 				// THREE.MeshStandardMaterial.prototype.copy.call( child.material, prevMaterial );
-				// const name = child.material.name;
+				// const wname = child.material.name;
 				// child.material = mat;
 				// child.material.name = name;
 			} );
 
 			const body = foundMeshByName( 'body', data.map.scene.children );
 
-			// this.testConvPol( body.children[ 0 ] );
-
 			this.vehicle.materials.body = foundMaterialInGroupByName( 'testCarPaint', body );
-			// this.vehicle.materials.body.wireframe = true;
-			this.vehicle.materials.body.emissive.setHex( 0x193e14 );
-
+			this.vehicle.materials.body.emissiveIntensity = 0;
+			this.vehicle.materials.body.envMapIntensity = 1.8;
+			this.vehicle.materials.body.metalness = 0.9;
+			this.vehicle.materials.body.roughness = 0.02;
+			this.vehicle.materials.body.color.setHex( 0x37af05 );
 
 			const suppRF = foundMeshByName( 'frSup', data.map.scene.children );
 			const suppLF = foundMeshByName( 'lfSup', data.map.scene.children );
@@ -400,10 +400,25 @@ class VehicleScene {
 			this.vehicle.materials.rim.LR = foundMaterialInGroupByName( 'frontDisk', wheel_LR );
 			this.vehicle.materials.rim.RR = foundMaterialInGroupByName( 'frontDisk', wheel_RR );
 
-			this.vehicle.materials.rim.LF.emissive.setHex( 0x8c8c8c );
-			this.vehicle.materials.rim.RF.emissive.setHex( 0x8c8c8c );
-			this.vehicle.materials.rim.LR.emissive.setHex( 0x8c8c8c );
-			this.vehicle.materials.rim.RR.emissive.setHex( 0x8c8c8c );
+			this.vehicle.materials.rim.LF.emissiveIntensity = 0;
+			this.vehicle.materials.rim.RF.emissiveIntensity = 0;
+			this.vehicle.materials.rim.LR.emissiveIntensity = 0;
+			this.vehicle.materials.rim.RR.emissiveIntensity = 0;
+
+			this.vehicle.materials.rim.LF.metalness = 0.8;
+			this.vehicle.materials.rim.RF.metalness = 0.8;
+			this.vehicle.materials.rim.LR.metalness = 0.8;
+			this.vehicle.materials.rim.RR.metalness = 0.8;
+
+			this.vehicle.materials.rim.LF.roughness = 0.45;
+			this.vehicle.materials.rim.RF.roughness = 0.45;
+			this.vehicle.materials.rim.LR.roughness = 0.45;
+			this.vehicle.materials.rim.RR.roughness = 0.45;
+
+			this.vehicle.materials.rim.LF.envMapIntensity = 1.1;
+			this.vehicle.materials.rim.RF.envMapIntensity = 1.1;
+			this.vehicle.materials.rim.LR.envMapIntensity = 1.1;
+			this.vehicle.materials.rim.RR.envMapIntensity = 1.1;
 
 			const tireLF = foundMaterialInGroupByName( 'tire', wheel_LF );
 			const tireRF = foundMaterialInGroupByName( 'tire', wheel_RF );
@@ -434,9 +449,8 @@ class VehicleScene {
 			this.vehicle.wheels.RR.name = 'RR';
 			this.vehicle.wheels.LR.name = 'LR';
 
-			data.map = null;
-
 			console.log( this.vehicle );
+			// console.log( this );
 			break;
 		case 'ground_color':
 			this.field.forEach( ( ground ) => {
@@ -469,6 +483,9 @@ class VehicleScene {
 		case 'headlightsFlare':
 			this.vehicle.body.addHeadlightsFlare( data.map );
 			break;
+		case 'vehicleMap':
+			// this.vehicle.body.addMap( data.map );
+			break;
 		default:
 			break;
 		}
@@ -491,6 +508,8 @@ class VehicleScene {
 				}
 			}
 		}
+
+		this.vehicle.addMap( this.assetes.get( 'vehicleMap' ) );
 	}
 
 	addFog() {
@@ -528,7 +547,7 @@ class VehicleScene {
 		// this.sceneLight = new THREE.PointLight( 'white' );
 		// this.sceneLightHelper = new THREE.PointLightHelper( this.sceneLight );
 
-		this.sceneLight = new THREE.DirectionalLight( 'white' );
+		this.sceneLight = new THREE.DirectionalLight( 'white', 1.5 );
 		// this.sceneLightHelper = new THREE.DirectionalLightHelper( this.sceneLight );
 		this.sceneLight.target.position.copy( this.camera.position );
 
@@ -545,10 +564,10 @@ class VehicleScene {
 		// this.sceneLight.shadow.mapSize.width = 1024;
 		// this.sceneLight.shadow.mapSize.height = 1024;
 
-		const skyColor = 0xB1E1FF;
-		const groundColor = 0xB97A20;
+		const skyColor = 0x46aded;
+		const groundColor = 0x0f0d0c;
 
-		const light = new THREE.HemisphereLight( skyColor, groundColor, 0.5 );
+		const light = new THREE.HemisphereLight( skyColor, groundColor, 0.3 );
 		// new THREE.AmbientLight( 'white', 0.3 );
 
 		this.scene.add( light );
