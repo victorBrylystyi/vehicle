@@ -10,7 +10,7 @@ class Vehicle {
 		this.timer = timer;
 		this.initPosition = new CANNON.Vec3( 80.66, 0.84348, -10.2846 );
 		this.bodyMass = 2000;
-		this.wheelMass = 30;
+		this.wheelMass = 20;
 		this.mainDim = {
 			body: {
 				x: 2.69,
@@ -91,13 +91,8 @@ class Vehicle {
 			// LR: new CANNON.Vec3( -10 / 15, 6.7 / 15, -3.3 / 15 ),
 			// RR: new CANNON.Vec3( -10 / 15, -6.7 / 15, -3.3 / 15 )
 
-			// LF: new CANNON.Vec3( 0, 0, 0 ),
-			// RF: new CANNON.Vec3( 0, 0, 0 ),
-			// LR: new CANNON.Vec3( 0, 0, 0 ),
-			// RR: new CANNON.Vec3( 0, 0, 0 )
-
-			LF: new CANNON.Vec3( 0.9066, 0.46, -0.205 ),
-			RF: new CANNON.Vec3( 0.9066, -0.46, -0.205 ),
+			LF: new CANNON.Vec3( 0.9066, 0.46, -0.20 ),
+			RF: new CANNON.Vec3( 0.9066, -0.46, -0.20 ),
 			LR: new CANNON.Vec3( -0.667, 0.4466, -0.22 ),
 			RR: new CANNON.Vec3( -0.667, -0.4466, -0.22 )
 		};
@@ -222,7 +217,6 @@ class Vehicle {
 
 	handler( event ) {
 		const keyUp = ( event.type === 'keyup' );
-		// console.log( this.raycastVehicle.currentVehicleSpeedKmHour );
 		switch( event.code ) {
 		case 'KeyB':
 			if ( !keyUp ) {
@@ -657,11 +651,12 @@ class Vehicle {
 		}
 	}
 
-	updateSupportsConnectionPoint() {
-		this.supports.LF.position.copy( this.raycastVehicle.wheelInfos[ 0 ].chassisConnectionPointLocal );
-		this.supports.RF.position.copy( this.raycastVehicle.wheelInfos[ 1 ].chassisConnectionPointLocal );
-		this.supports.LR.position.copy( this.raycastVehicle.wheelInfos[ 2 ].chassisConnectionPointLocal );
-		this.supports.RR.position.copy( this.raycastVehicle.wheelInfos[ 3 ].chassisConnectionPointLocal );
+	updateSupportsConnectionPoint( c ) {
+		this.supports.LF.position.z = -0.22 - c;
+		this.supports.RF.position.z = -0.22 - c;
+		this.supports.LR.position.z = -0.22 - c;
+		this.supports.RR.position.z = -0.22 - c;
+
 	}
 
 	changeHeadlightsTargetX( x ) {
@@ -700,7 +695,7 @@ class Vehicle {
 		this.raycastVehicle.wheelInfos[ 2 ].chassisConnectionPointLocal.z = this.connectionPointsWheels.LR.z - c;
 		this.raycastVehicle.wheelInfos[ 3 ].chassisConnectionPointLocal.z = this.connectionPointsWheels.RR.z - c;
 
-		this.updateSupportsConnectionPoint();
+		this.updateSupportsConnectionPoint( c );
 	}
 
 	changeCompression( dC ) {

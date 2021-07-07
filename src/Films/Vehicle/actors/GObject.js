@@ -42,8 +42,6 @@ class GObject extends THREE.Group {
 					this.children[ i ].children[ k ].material.map.wrapS = THREE.RepeatWrapping;
 					this.children[ i ].children[ k ].material.map.wrapT = THREE.RepeatWrapping;
 					this.children[ i ].children[ k ].material.map.repeat.set( 5, 5 );
-					// this.children[ i ].children[ k ].material.map.image.width /= 2;
-					// this.children[ i ].children[ k ].material.map.image.height /= 2;
 					this.children[ i ].children[ k ].material.map.generateMipmaps = true;
 					this.children[ i ].children[ k ].material.needsUpdate = true;
 				}
@@ -155,9 +153,6 @@ class GObject extends THREE.Group {
 			switch( shape.type ) {
 
 			case CANNON.Shape.types.BOX:
-				// let box_geometry = new THREE.BoxGeometry( shape.halfExtents.x * 2 * 15,
-				// 	shape.halfExtents.y * 2 * 15,
-				// 	shape.halfExtents.z * 2 * 15 );
 				let box_geometry = new THREE.BoxGeometry( shape.halfExtents.x * 2,
 					shape.halfExtents.y * 2,
 					shape.halfExtents.z * 2 );
@@ -170,11 +165,6 @@ class GObject extends THREE.Group {
 					shape.drawData.height,
 					shape.drawData.segments,
 					shape.drawData.segments );
-				// let sphere_geometry = new THREE.CylinderGeometry( shape.drawData.radius,
-				// 	shape.drawData.radius * 15,
-				// 	shape.drawData.height * 15,
-				// 	shape.drawData.segments * 15,
-				// 	shape.drawData.segments * 15 );
 				sphere_geometry.rotateX( Math.PI / 2 );
 				mesh = new THREE.Mesh( sphere_geometry, this.physicMeshMatrtial );
 
@@ -188,13 +178,6 @@ class GObject extends THREE.Group {
 				let v0 = new CANNON.Vec3();
 				let v1 = new CANNON.Vec3();
 				let v2 = new CANNON.Vec3();
-
-				// let uvs = [
-				//   0.0, 0.0,
-				//   1.0, 0.0,
-				//   1.0, 1.0,
-				//   0.0, 1.0,
-				// ];
 
 				for ( let xi = 0; xi < shape.data.length - 1; xi++ ) {
 					for ( let yi = 0; yi < shape.data[ xi ].length - 1; yi++ ) {

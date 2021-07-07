@@ -35,10 +35,6 @@ module.exports = {
 					to: 'assets'
 				},
 				{
-					from: 'libs',
-					to: 'libs'
-				},
-				{
 					from: 'favicon.svg',
 					to: 'favicon.svg'
 				}

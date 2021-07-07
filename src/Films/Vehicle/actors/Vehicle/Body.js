@@ -24,7 +24,6 @@ class Body extends GObject {
 		this.graphic.physicMesh.visible = false;
 		this.graphic.physicMesh.name = 'vehicleBody';
 		this.add( this.graphic.physicMesh );
-		this.castShadow = true;
 	}
 
 	createBody() {

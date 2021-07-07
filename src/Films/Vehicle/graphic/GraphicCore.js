@@ -6,7 +6,6 @@ import { GraphicLoader } from './GraphicLoader';
 import { VehicleScene } from './scenes/VehicleScene';
 import { LoaderIndicator } from './LoaderIndicator';
 import { Timer } from './Timer';
-// import { TestCarStyle } from './scenes/TestCarStyle';
 
 
 class GraphicCore {
@@ -53,39 +52,22 @@ class GraphicCore {
 		this.renderer = new THREE.WebGLRenderer( {
 			canvas: this.canvas,
 			antialias: true
-			// powerPreference: 'high-performance'
-
-			// logarithmicDepthBuffer: true
 		} );
 		this.renderer.autoClear = true;
 
 		this.pixelRatio = window.devicePixelRatio;
 		this.renderer.setPixelRatio( this.pixelRatio );
 
-
-		// this.renderer.shadowMap.enabled = false;
-		// this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-		// this.threeClock = new THREE.Clock();
-
 		window.addEventListener( 'resize', () => {
 			this.resize();
 		} );
 		this.currentScene = new VehicleScene( this.canvas, this.currentPhysicWorld, this.timer );
-		// this.currentScene = new TestCarStyle( this.canvas );
-
 
 		console.log( 'THREE done init' );
 	}
 
-	visuShadows( status ) {
-		this.renderer.shadowMap.enabled = status;
-		this.currentScene.shadowUpdate( status );
-	}
-
 	preStart() {
 		this.startLoadAssets();
-		// this.threeClock.start();
 		if ( this.timer ) {
 			this.timer.preStart();
 		}
@@ -104,7 +86,6 @@ class GraphicCore {
 	}
 
 	postStart() {
-		// this.threeClock.stop();
 		if ( this.timer ) {
 			this.timer.postStart();
 		}

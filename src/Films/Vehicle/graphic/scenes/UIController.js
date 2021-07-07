@@ -178,11 +178,6 @@ class UIController {
 				}
 			} );
 
-		scene.add( params, 'shadow' )
-			.onChange( ( v ) => {
-				this.film.cores.graphic.visuShadows( v );
-			} );
-
 		scene.addColor( params, 'background' )
 			.onChange( ( color ) => {
 				currentScene.gui.changeSceneBackground( color );

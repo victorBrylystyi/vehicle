@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events';
 import * as THREE from 'three';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 
@@ -45,12 +44,7 @@ class GraphicLoader extends EventEmitter {
 
 			case 'gltf':
 			case 'glb':
-				const loader = new GLTFLoader();
-				const dracoLoader = new DRACOLoader();
-				dracoLoader.setDecoderPath( '/libs/draco/' );
-				loader.setDRACOLoader( dracoLoader );
-
-				return loader;
+				return new GLTFLoader();
 
 			default:
 				console.warn( `Dismatch type 3d loader:${ asset.name } !` );

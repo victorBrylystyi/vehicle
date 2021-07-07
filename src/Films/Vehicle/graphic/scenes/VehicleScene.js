@@ -59,79 +59,7 @@ class VehicleScene {
 			elementSize: 30
 		}, new THREE.Vector3( -250, 0, 250 ) );
 
-		// const ground2 = new Ground( this.physicWorld, {
-		// 	sizeX: 100,
-		// 	sizeY: 100,
-		// 	heightPlane: 10,
-		// 	amplitude: 3,
-		// 	elementSize: 5
-		// }, new THREE.Vector3( -745, 0, 250 ) );
-
-		// const ground3 = new Ground( this.physicWorld, {
-		// 	sizeX: 100,
-		// 	sizeY: 100,
-		// 	heightPlane: 10,
-		// 	amplitude: 1,
-		// 	elementSize: 5
-		// }, new THREE.Vector3( 245, 0, 250 ) );
-
-		// const ground4 = new Ground( this.physicWorld, {
-		// 	sizeX: 100,
-		// 	sizeY: 100,
-		// 	heightPlane: 10,
-		// 	amplitude: 0.1,
-		// 	elementSize: 5
-		// }, new THREE.Vector3( 245, 0, 745 ) );
-
-		// const ground5 = new Ground( this.physicWorld, {
-		// 	sizeX: 100,
-		// 	sizeY: 100,
-		// 	heightPlane: 10,
-		// 	amplitude: 2,
-		// 	elementSize: 5
-		// }, new THREE.Vector3( 245, 0, -245 ) );
-
-		// const ground6 = new Ground( this.physicWorld, {
-		// 	sizeX: 100,
-		// 	sizeY: 100,
-		// 	heightPlane: 10,
-		// 	amplitude: 3,
-		// 	elementSize: 5
-		// }, new THREE.Vector3( -250, 0, -245 ) );
-
-		// const ground7 = new Ground( this.physicWorld, {
-		// 	sizeX: 100,
-		// 	sizeY: 100,
-		// 	heightPlane: 10,
-		// 	amplitude: 1,
-		// 	elementSize: 5
-		// }, new THREE.Vector3( -250, 0, 745 ) );
-
-		// const ground8 = new Ground( this.physicWorld, {
-		// 	sizeX: 100,
-		// 	sizeY: 100,
-		// 	heightPlane: 10,
-		// 	amplitude: 2,
-		// 	elementSize: 5
-		// }, new THREE.Vector3( -745, 0, 745 ) );
-
-		// const ground9 = new Ground( this.physicWorld, {
-		// 	sizeX: 100,
-		// 	sizeY: 100,
-		// 	heightPlane: 10,
-		// 	amplitude: 5,
-		// 	elementSize: 5
-		// }, new THREE.Vector3( -745, 0, -245 ) );
-
 		this.field.set( 'ground1', ground );
-		// this.field.set( 'ground2', ground2 );
-		// this.field.set( 'ground3', ground3 );
-		// this.field.set( 'ground4', ground4 );
-		// this.field.set( 'ground5', ground5 );
-		// this.field.set( 'ground6', ground6 );
-		// this.field.set( 'ground7', ground7 );
-		// this.field.set( 'ground8', ground8 );
-		// this.field.set( 'ground9', ground9 );
 
 		this.gui = {
 			changeSceneBackground: ( colorHex ) => {
@@ -245,7 +173,6 @@ class VehicleScene {
 		};
 
 		this.field.forEach( ( ground ) => {
-			// ground.receiveShadow = true;
 			this.scene.add( ground );
 		} );
 
@@ -290,17 +217,9 @@ class VehicleScene {
 				if ( !child.isMesh ) {
 					return undefined;
 				}
-
-				// const mat = new THREE.MeshPhysicalMaterial( { color: 'white', metalness: 0.96, roughness: 0.1 } );
-
-				// child.castShadow = true;
-
 				// let prevMaterial = child.material;
 				// child.material = new THREE.MeshPhysicalMaterial();
 				// THREE.MeshStandardMaterial.prototype.copy.call( child.material, prevMaterial );
-				// const wname = child.material.name;
-				// child.material = mat;
-				// child.material.name = name;
 			} );
 
 			const body = foundMeshByName( 'body', data.map.scene.children );
@@ -450,7 +369,7 @@ class VehicleScene {
 			this.vehicle.wheels.LR.name = 'LR';
 
 			console.log( this.vehicle );
-			// console.log( this );
+			console.log( this );
 			break;
 		case 'ground_color':
 			this.field.forEach( ( ground ) => {
@@ -537,16 +456,7 @@ class VehicleScene {
 		this.controls.maxPolarAngle = this.settings.controlsMaxAngle;
 	}
 
-	shadowUpdate( status ) {
-		if ( this.sceneLight ) {
-			this.sceneLight.castShadow = status;
-		}
-	}
-
 	addSceneLight() {
-		// this.sceneLight = new THREE.PointLight( 'white' );
-		// this.sceneLightHelper = new THREE.PointLightHelper( this.sceneLight );
-
 		this.sceneLight = new THREE.DirectionalLight( 'white', 1.5 );
 		// this.sceneLightHelper = new THREE.DirectionalLightHelper( this.sceneLight );
 		this.sceneLight.target.position.copy( this.camera.position );
@@ -555,26 +465,15 @@ class VehicleScene {
 		this.sceneLight.position.y = 230;
 		this.sceneLight.position.z = 60;
 
-
-		// this.sceneLight.castShadow = false;
-		// this.sceneLight.shadow.camera.near = 1;
-		// this.sceneLight.shadow.camera.far = 1000;
-		// this.sceneLight.shadow.bias = -0.001;
-
-		// this.sceneLight.shadow.mapSize.width = 1024;
-		// this.sceneLight.shadow.mapSize.height = 1024;
-
 		const skyColor = 0x46aded;
 		const groundColor = 0x0f0d0c;
 
 		const light = new THREE.HemisphereLight( skyColor, groundColor, 0.3 );
-		// new THREE.AmbientLight( 'white', 0.3 );
 
 		this.scene.add( light );
 		this.scene.add( this.sceneLight );
 		this.scene.add( this.sceneLight.target );
 		// this.scene.add( this.sceneLightHelper );
-
 	}
 
 	resizeAction() {
@@ -583,22 +482,12 @@ class VehicleScene {
 	}
 
 	updateScene() {
-		this.updateSceneLight();
 		this.updateControls();
 	}
 
 	updateControls() {
 		this.controls.target.copy( this.vehicle.body.position );
 		this.controls.update();
-	}
-
-	updateSceneLight() {
-		// this.sceneLight.target.updateMatrixWorld();
-		// this.sceneLightHelper.update();
-		// this.sceneLight.position.y = 100 + this.settings.sceneLightBias;
-		// this.sceneLight.position.x = this.vehicle.body.position.x + 30;
-		// this.sceneLight.position.y = this.vehicle.body.position.y + 25 + this.settings.sceneLightBias;
-		// this.sceneLight.position.z = this.vehicle.body.position.z + 30;
 	}
 
 	updateActors() {
