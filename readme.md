@@ -1,14 +1,14 @@
 ﻿
 # Physic vehicle simulation 
 
-Приложение по управлению ТС отображающее базовые физические и визуальные свойства автомобиля. В качестве физического движка используется [Cannon.js](https://schteppe.github.io/cannon.js/), для графики - [Three.js](https://threejs.org/) . 
-Мир представлен неровной поверхностью и свободно управляемым автомобилем. Редактирование свойств физического мира, сцены и автомобиля доступно в UI. 
+Vehicle driving application displaying the basic physical and visual properties of the vehicle. It is used as a physics engine [Cannon.js](https://schteppe.github.io/cannon.js/), for graphics - [Three.js](https://threejs.org/) . 
+The world is presented by uneven surfaces and a free-flowing vehicle. Editing the properties of the physical world, scene and car in the available UI.
 
 ## Recommendations: 
-- Используйте настройки сцены для: изменения окружения (on/off fog mode and change fog and background color using "background"); изменения настроек освещения сцены.
-- Для комфортной езды в настройках сцены задайте параметры "cameraMaxDist" = 3; "cameraMaxAngle" = 1.09 (for example). Далее в зависимости от желаемого Вами режима просмотра (driving, vehicle view etc. ) изменяйте данные параметры на Ваше усмотрение.
-- В настройках физического мира ("World") есть возможность поиграться с гравитацией; управлять режимами работы как графического "stopAnimation" так и физического движка "pausePhysic"; менять частоту работы физического мира (по умолчанию 1/60 как и графика).
-- Настройки автомобиля дают возможность управлять: максимальной силой тяги на колесах "maxEngineForce"; максимальным тормозным усилием "maxBreakForce"; трением между колесом и поверхностью "friction"; выбрать тип привода. Так же доступны настройки фар, подвески и материалов в соответствующих разделах. 
+- Use the scene settings to: change the environment (on / off fog mode and change fog and background color using "background"); changing the scene lighting settings.
+- For a comfortable driving in the scene settings, set the parameters "cameraMaxDist" = 3; "cameraMaxAngle" = 1.09 (for example). Further, depending on the desired view mode (driving, vehicle view etc.), change these parameters at your discretion.
+- In the settings of the physical world ("World") there is an opportunity to play with gravity; manage the modes of operation of both the graphical "stopAnimation" and the physical engine "pausePhysic"; change the frequency of the physical world (by default 1/60 like the graphics).
+- Car settings make it possible to control: maximum traction force on wheels "maxEngineForce"; maximum braking force "maxBreakForce"; friction between the wheel and the surface; select the type of drive. The settings for headlights, suspension and materials are also available in the corresponding sections.
 
 ## Functions:
 1. Object controls (WASD);
