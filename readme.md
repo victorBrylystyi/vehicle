@@ -21,11 +21,9 @@ The world is presented by uneven surfaces and a free-flowing vehicle. Editing th
 8. V - visible/invisible ui
 
 # Demo 
- ![Alt Text](/gif/intro.gif)
-
- <p align="center">
+ <p style="text-align: center;">
 <img src="/gif/intro.gif" width="80%"></p>
-<h2 align="center"><a  href="https://physic-vehicle-model.herokuapp.com/">LIVE DEMO</a></h2>
+<h2 style="text-align: center;"><a  href="https://physic-vehicle-model.herokuapp.com/">LIVE DEMO</a></h2>
  
 # Usage 
 From root project install modules:
