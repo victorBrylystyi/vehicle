@@ -34,7 +34,7 @@ To run dev server use:
     npm run start
 
 # Structure 
-And this will produce a flow chart:
+Application flow chart:
 
 ```mermaid
 graph LR
@@ -48,8 +48,6 @@ B(UI) --> A
 C(Graphic) --> A
 D(Physic) --> A
 A[Vehicle film/Current scene]
-
-
 ```
 
 # Docs 
