@@ -6,7 +6,7 @@ The world is presented by uneven surfaces and a free-flowing vehicle. Editing th
 
 ## Recommendations: 
 - Use the scene settings to: change the environment (on / off fog mode and change fog and background color using "background"); changing the scene lighting settings.
-- For a comfortable driving in the scene settings, set the parameters "cameraMaxDist" = 3; "cameraMaxAngle" = 1.09 (for example). Further, depending on the desired view mode (driving, vehicle view etc.), change these parameters at your discretion.
+- Depending on the desired view mode (driving, vehicle view etc.), change parameters "cameraMaxDist" and "cameraMaxAngle" at your discretion.
 - In the settings of the physical world ("World") there is an opportunity to play with gravity; manage the modes of operation of both the graphical "stopAnimation" and the physical engine "pausePhysic"; change the frequency of the physical world (by default 1/60 like the graphics).
 - Car settings make it possible to control: maximum traction force on wheels "maxEngineForce"; maximum braking force "maxBreakForce"; friction between the wheel and the surface; select the type of drive. The settings for headlights, suspension and materials are also available in the corresponding sections.
 

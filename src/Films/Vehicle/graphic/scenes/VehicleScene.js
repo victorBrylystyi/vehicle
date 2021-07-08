@@ -486,6 +486,24 @@ class VehicleScene {
 	}
 
 	updateControls() {
+		if ( this.vehicle.raycastVehicle.currentVehicleSpeedKmHour > 7 ||
+			this.vehicle.raycastVehicle.currentVehicleSpeedKmHour < -7 ) {
+			if ( ( this.controls.maxPolarAngle > 1.09 + 0.02 ) || ( this.controls.maxPolarAngle < 1.09 - 0.02 ) ) {
+				if ( this.controls.maxPolarAngle > 1.09 ) {
+					this.controls.maxPolarAngle -= 0.002;
+				} else if ( this.controls.maxPolarAngle < 1.09 ) {
+					this.controls.maxPolarAngle += 0.002;
+				}
+			}
+		} else if ( ( this.controls.maxPolarAngle > this.settings.controlsMaxAngle + 0.02 ) ||
+			( this.controls.maxPolarAngle < this.settings.controlsMaxAngle - 0.02 ) ) {
+			if ( this.controls.maxPolarAngle > this.settings.controlsMaxAngle ) {
+				this.controls.maxPolarAngle -= 0.01;
+			} else if ( this.controls.maxPolarAngle < this.settings.controlsMaxAngle ) {
+				this.controls.maxPolarAngle += 0.01;
+			}
+		}
+
 		this.controls.target.copy( this.vehicle.body.position );
 		this.controls.update();
 	}
