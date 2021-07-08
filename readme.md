@@ -21,7 +21,9 @@ The world is presented by uneven surfaces and a free-flowing vehicle. Editing th
 8. V - visible/invisible ui
 
 # Demo 
- - [Live application](https://physic-vehicle-model.herokuapp.com/) 
+ ![Alt Text](/gif/intro.gif)
+
+ - [APP LINK](https://physic-vehicle-model.herokuapp.com/) 
 
 
 # Usage 
