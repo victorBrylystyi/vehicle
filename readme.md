@@ -22,7 +22,7 @@ The world is presented by uneven surfaces and a free-flowing vehicle. Editing th
 
 # Demo 
  <p align="center">
-<img src="/gif/intro.gif" width="80%"></p>
+<img src="/gif/intro.gif" width="50%" height="80%"></p>
 <h2 align="center"><a  href="https://physic-vehicle-model.herokuapp.com/">LIVE DEMO</a></h2>
  
 # Usage 
