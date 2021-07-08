@@ -39,7 +39,7 @@ Application flow chart:
 
 <img src="/gif/vehicleFlow.png" width="80%" height="80%">
 
-```mermaid
+
 graph LR
 H(body) --> F
 I(wheels)--> F
@@ -51,7 +51,7 @@ B(UI) --> A
 C(Graphic) --> A
 D(Physic) --> A
 A[Vehicle film/Current scene]
-```
+
 
 # Docs 
 
