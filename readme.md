@@ -39,20 +39,6 @@ Application flow chart:
  <p align="center">
 <img src="/gif/vehicleFlow.png" width="100%" height="100%"></p>
 
-```mermaid
-graph LR
-H(body) --> F
-I(wheels)--> F
-F(Vehicle) --> E
-G(Ground) --> E
-E(Actors) --> C
-E(Actors) --> D
-B(UI) --> A
-C(Graphic) --> A
-D(Physic) --> A
-A[Vehicle film/Current scene]
-```
-
 # Docs 
 
 - [Three.js](https://threejs.org/) 
