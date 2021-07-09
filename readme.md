@@ -36,8 +36,8 @@ To run dev server use:
 
 # Structure 
 Application flow chart:
-
-<img src="/gif/vehicleFlow.png" width="80%" height="80%">
+ <p align="center">
+<img src="/gif/vehicleFlow.png" width="80%" height="80%"></p>
 
 ```mermaid
 graph LR
