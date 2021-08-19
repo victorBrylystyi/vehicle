@@ -8,7 +8,7 @@ class Core {
 	}
 
 	greeting() {
-		console.log( `Hi! I am ${ this.name } =))` );
+		console.log( `Hi! I am ${ this.name } =)))` );
 	}
 
 	init() {}
