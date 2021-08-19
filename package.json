@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "heroku": "git subtree push --prefix demo/out heroku master && heroku open",
-    "git": "git add . && git commit -m 'final + auto camera3' && git push -u origin main",
+    "git": "git add . && git commit -m 'final + auto camera4' && git push -u origin main",
     "herokuBuild": "npm run build && npm --prefix demo run build && npm run git && npm run heroku",
     "buildDev": "webpack --config webpack.config.dev.js",
     "build": "webpack --config webpack.config.prod.js",
