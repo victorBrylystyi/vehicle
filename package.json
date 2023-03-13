@@ -11,9 +11,8 @@
     "buildDev": "webpack --config webpack.config.dev.js",
     "build": "webpack --config webpack.config.prod.js",
     "watch": "webpack --watch --config webpack.config.dev.js",
-    "install": "npm run install && npm --prefix demo run install",
     "buildProd": "npm run build && npm --prefix demo run build",
-    "start": "npm run buildProd && npm run --prefix demo run start"
+    "start": "npm run buildProd && npm run --prefix demo start"
   },
   "keywords": [],
   "author": "",
